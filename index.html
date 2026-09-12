@@ -171,7 +171,7 @@
   .pf-db-chart { display: block; width: 100%; height: 13cqw; margin-top: .6cqw; }
   .pf-db-bars rect { transform-origin: 50% 100%; transform-box: fill-box; transform: scaleY(0); } .pf-db.is-in .pf-db-bars rect { animation: pf-bar-up .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 60ms); }
   .pf-db-line { stroke-dasharray: 600; stroke-dashoffset: 600; } .pf-db.is-in .pf-db-line { animation: pf-draw-long 2.2s ease-out .4s forwards; }
-  @keyframes pf-bar-up { from { transform: scaleY(0); } }
+  @keyframes pf-bar-up { from { transform: scaleY(0); } to { transform: scaleY(1); } }
   @keyframes pf-draw-long { to { stroke-dashoffset: 0; } }
 
   .pf-api-req, .pf-api-side { font-size: 2.1cqw; }
@@ -258,8 +258,49 @@
   @keyframes pf-fill { 0% { transform: scaleX(0); } 12% { transform: scaleX(0); } 58% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
   @keyframes pf-dot { 0%, 55% { background: transparent; border-color: #555; } 62%, 100% { background: #93c572; border-color: #93c572; } }
 
+  /* ---------- Mobil ---------- */
+  .pf-burger { display: none; width: 40px; height: 40px; margin-right: -8px; border: 0; background: none; padding: 8px; cursor: pointer; flex-direction: column; justify-content: center; gap: 5px; }
+  .pf-burger i { display: block; height: 1.5px; background: #ededed; border-radius: 2px; transition: transform .25s, opacity .2s; }
+  .pf-burger[aria-expanded="true"] i:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+  .pf-burger[aria-expanded="true"] i:nth-child(2) { opacity: 0; }
+  .pf-burger[aria-expanded="true"] i:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+  .pf-menu { display: none; }
+  .pf-dots { display: none; }
+  @media (max-width: 640px) {
+    .pf-navlink-top { display: none; }
+    .pf-burger { display: flex; }
+    .pf-menu { display: flex; flex-direction: column; border-top: 1px solid #161616; background: rgba(10,10,10,.96); padding: 8px clamp(20px,4vw,40px) 14px; }
+    .pf-menu[hidden] { display: none; }
+    .pf-menu a { padding: 13px 0; font-size: 16px; color: #d4d4d4; border-bottom: 1px solid #161616; }
+    .pf-menu a:last-child { border-bottom: 0; }
+
+    /* bento: iki sütun, kendi yüksekliği */
+    .pf-stage { aspect-ratio: auto !important; }
+    .pf-bento { position: relative !important; inset: auto !important; grid-template-columns: 1fr 1fr !important; grid-template-rows: auto !important; grid-template-areas: "deploy deploy" "ring heat" "up wave" "stack stack" !important; }
+    .pf-tile { min-height: 150px; }
+    .t-deploy { min-height: 0; }
+    .t-stack { min-height: 0; }
+    .pf-ring { width: 56%; }
+
+    /* iş kartları: yatay slider */
+    .pf-wgrid { flex-direction: row !important; gap: 14px !important; overflow-x: auto; overscroll-behavior-x: contain; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+      margin: 0 calc(-1 * clamp(20px,4vw,40px)); padding: 4px clamp(20px,4vw,40px) 12px; scrollbar-width: none; }
+    .pf-wgrid::-webkit-scrollbar { display: none; }
+    .pf-wrow { display: contents !important; }
+    .pf-wcard { flex: 0 0 min(86vw, 360px) !important; scroll-snap-align: center; scroll-snap-stop: always; display: flex; flex-direction: column; }
+    .pf-wcard > article { flex: 1; }
+    .pf-wcard > article > div[style*="height:136px"] { height: auto !important; flex: 1; min-height: 220px; }
+    .pf-mini { display: flex; flex-direction: column; }
+    .pf-db-chart { flex: 1; height: auto; max-height: 50cqw; }
+    .pf-api-body { flex: 1; }
+    .pf-dots { display: flex; justify-content: center; gap: 6px; margin-top: 4px; }
+    .pf-dots i { width: 6px; height: 6px; border-radius: 50%; background: #2a2a2a; transition: background .25s, width .25s; }
+    .pf-dots i.on { background: #93c572; width: 18px; border-radius: 3px; }
+  }
+
   /* ---------- Hero sağ alan: bento grid ---------- */
   .pf-stage { container-type: inline-size; }
+  @media (max-width: 900px) { .pf-stage { aspect-ratio: 1.4; } }
   @media (max-width: 640px) { .pf-stage { aspect-ratio: 1.05; } .pf-bento { grid-template-rows: 1.1fr 1fr .6fr; } }
   .pf-bento { position: absolute; inset: 0; display: grid; gap: clamp(10px, 2.2cqw, 14px); grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1.15fr 1fr .62fr;
     grid-template-areas: "deploy deploy ring" "heat up wave" "stack stack wave"; font-family: Inter, sans-serif; color: #ededed; }
@@ -327,13 +368,21 @@
   <header style="position:sticky;top:0;z-index:30;background:rgba(10,10,10,0.86);backdrop-filter:blur(12px)">
     <div style="max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,40px);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px">
       <a href="#top" style="font-size:15px;font-weight:500;letter-spacing:-0.01em;flex-shrink:0">Can Bayır</a>
-      <nav style="display:flex;align-items:center;gap:clamp(14px,2.4vw,30px);flex-wrap:wrap">
-        <a href="#work" style="font-size:14px;color:#8f8f8f">Work</a>
-        <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" style="font-size:14px;color:#8f8f8f">GitHub</a>
-        <a href="#approach" style="font-size:14px;color:#8f8f8f">Approach</a>
-        <a href="#about" style="font-size:14px;color:#8f8f8f">About</a>
-        <a href="mailto:canbayirr055@gmail.com" style="font-size:13.5px;font-weight:500;color:#0a0a0a;background:#ededed;padding:8px 14px;border-radius:8px">Email me</a>
+      <nav class="pf-nav" style="display:flex;align-items:center;gap:clamp(14px,2.4vw,30px)">
+        <a href="#work" class="pf-navlink-top" style="font-size:14px;color:#8f8f8f">Work</a>
+        <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" class="pf-navlink-top" style="font-size:14px;color:#8f8f8f">GitHub</a>
+        <a href="#approach" class="pf-navlink-top" style="font-size:14px;color:#8f8f8f">Approach</a>
+        <a href="#about" class="pf-navlink-top" style="font-size:14px;color:#8f8f8f">About</a>
+        <a href="mailto:canbayirr055@gmail.com" style="font-size:13.5px;font-weight:500;color:#0a0a0a;background:#ededed;padding:8px 14px;border-radius:8px;white-space:nowrap">Email me</a>
+        <button type="button" class="pf-burger" aria-label="Menu" aria-expanded="false" aria-controls="pf-menu"><i></i><i></i><i></i></button>
       </nav>
+    </div>
+    <div id="pf-menu" class="pf-menu" hidden>
+      <a href="#work">Work</a>
+      <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer">GitHub</a>
+      <a href="#approach">Approach</a>
+      <a href="#about">About</a>
+      <a href="#contact">Contact</a>
     </div>
     <div style="height:1px;background:#161616"></div>
   </header>
@@ -432,10 +481,10 @@
         <a href="mailto:canbayirr055@gmail.com" style="font-size:14px;color:#8f8f8f;border-bottom:1px solid #2a2a2a;padding-bottom:3px">Ask for details</a>
       </div>
 
-      <div style="display:flex;flex-direction:column;gap:22px">
+      <div class="pf-wgrid" style="display:flex;flex-direction:column;gap:22px">
 
-        <div style="display:flex;flex-wrap:wrap;gap:22px">
-          <div style="flex:1.75 1 420px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#5fcbb0 32%,#24544a 64%,#141414 100%)">
+        <div class="pf-wrow" style="display:flex;flex-wrap:wrap;gap:22px">
+          <div class="pf-wcard" style="flex:1.75 1 420px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#5fcbb0 32%,#24544a 64%,#141414 100%)">
             <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
               <div style="position:relative;flex:1;min-height:clamp(250px,62vw,380px);overflow:hidden;background:#0b0b0b">
                 <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
@@ -521,8 +570,8 @@
             </article>
           </div>
 
-          <div style="flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:22px">
-            <div style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#93c572 36%,#2c6b3f 68%,#141414 100%)">
+          <div class="pf-wrow" style="flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:22px">
+            <div class="pf-wcard" style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#93c572 36%,#2c6b3f 68%,#141414 100%)">
               <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
                 <div style="position:relative;height:136px;overflow:hidden;flex-shrink:0">
                   <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
@@ -550,7 +599,7 @@
                 </div>
               </article>
             </div>
-            <div style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#2c7f6f,#5fcbb0 40%,#93c572 74%,#141414 100%)">
+            <div class="pf-wcard" style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#2c7f6f,#5fcbb0 40%,#93c572 74%,#141414 100%)">
               <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
                 <div style="position:relative;height:136px;overflow:hidden;flex-shrink:0">
                   <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
@@ -582,8 +631,8 @@
           </div>
         </div>
 
-        <div style="display:flex;flex-wrap:wrap;gap:22px">
-          <div style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#2c7f6f 42%,#5fcbb0 76%,#141414 100%)">
+        <div class="pf-wrow" style="display:flex;flex-wrap:wrap;gap:22px">
+          <div class="pf-wcard" style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#2c7f6f 42%,#5fcbb0 76%,#141414 100%)">
             <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%">
               <div style="position:relative;aspect-ratio:16/9;overflow:hidden">
                 <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
@@ -617,7 +666,7 @@
             </article>
           </div>
 
-          <div style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#2c7f6f 38%,#93c572 78%,#141414 100%)">
+          <div class="pf-wcard" style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#2c7f6f 38%,#93c572 78%,#141414 100%)">
             <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%">
               <div style="position:relative;aspect-ratio:16/9;overflow:hidden">
                 <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
@@ -651,6 +700,7 @@
         </div>
 
       </div>
+      <div class="pf-dots" aria-hidden="true"></div>
     </section>
 
     <section id="process" style="padding:clamp(80px,9vw,128px) 0;border-top:1px solid #161616">
@@ -870,6 +920,35 @@
   </main>
 </div>
 <script>
+// Mobil menü
+(function () {
+  const btn = document.querySelector('.pf-burger'), menu = document.getElementById('pf-menu');
+  if (!btn || !menu) return;
+  const set = (open) => { btn.setAttribute('aria-expanded', String(open)); menu.hidden = !open; };
+  btn.addEventListener('click', () => set(menu.hidden));
+  menu.querySelectorAll('a').forEach(a => a.addEventListener('click', () => set(false)));
+  window.addEventListener('resize', () => { if (window.innerWidth > 640) set(false); });
+})();
+
+// İş kartları slider noktaları (mobil)
+(function () {
+  const grid = document.querySelector('.pf-wgrid'), dots = document.querySelector('.pf-dots');
+  if (!grid || !dots) return;
+  const cards = [...grid.querySelectorAll('.pf-wcard')];
+  dots.innerHTML = cards.map(() => '<i></i>').join('');
+  const ds = [...dots.children];
+  const update = () => {
+    const mid = grid.scrollLeft + grid.clientWidth / 2;
+    let best = 0, d = Infinity;
+    cards.forEach((c, i) => { const cm = c.offsetLeft + c.offsetWidth / 2; const dd = Math.abs(cm - mid); if (dd < d) { d = dd; best = i; } });
+    ds.forEach((el, i) => el.classList.toggle('on', i === best));
+  };
+  grid.addEventListener('scroll', update, { passive: true });
+  window.addEventListener('resize', update);
+  ds.forEach((el, i) => el.addEventListener('click', () => cards[i].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' })));
+  update();
+})();
+
 // Scroll'a giren sahneleri tetikle (data-reveal -> .is-in)
 (function () {
   const els = document.querySelectorAll('[data-reveal]');
