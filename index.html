@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Can Bayır — .NET Core developer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" />
+<style>
+  html { -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: #0a0a0a; }
+  a { color: #ededed; text-decoration: none; }
+  a:hover { color: #ffffff; }
+  ::selection { background: #5fcbb0; color: #0a0a0a; }
+  @keyframes om-pulse-x { 0% { left: 0; opacity: 0 } 14% { opacity: 1 } 86% { opacity: 1 } 100% { left: 100%; opacity: 0 } }
+  @keyframes om-pulse-y { 0% { top: 0; opacity: 0 } 14% { opacity: 1 } 86% { opacity: 1 } 100% { top: 100%; opacity: 0 } }
+  @keyframes om-live { 0%, 100% { border-color: #2a2a2a; color: #b4b4b4 } 50% { border-color: #3f7f6e; color: #d9f0e4 } }
+  @keyframes om-marquee { to { transform: translateX(-50%) } }
+  @keyframes om-flow { to { stroke-dashoffset: 0 } }
+  @keyframes om-node { 0%, 100% { stroke: #242424 } 50% { stroke: #3f6f5e } }
+  @keyframes om-caret { 0%, 49% { opacity: 1 } 50%, 100% { opacity: 0 } }
+  @keyframes om-rise { 0%, 100% { transform: scaleY(0.82) } 50% { transform: scaleY(1) } }
+
+  /* Görsel yer tutucuları: dosya bulunamazsa img gizlenir, altındaki kutu görünür */
+  .pf-img { position: relative; overflow: hidden; background: #111; }
+  .pf-img > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+  .pf-img > img[data-missing] { display: none; }
+  .pf-img > span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 11px; letter-spacing: 0.12em; text-transform: uppercase; color: #6a6a6a; border: 1px dashed #2a2a2a; text-align: center; padding: 8px; }
+  .pf-img > img:not([data-missing]) + span { display: none; }
+  .pf-avatar { width: 88px; height: 88px; border-radius: 50%; flex-shrink: 0; border: 1px solid #242424; }
+  .pf-avatar > span { border-radius: 50%; font-size: 22px; letter-spacing: 0; font-weight: 500; color: #93c572; }
+
+  /* ---------- Hero: dalgalanan kart + 3D laptop ---------- */
+  .pf-stage { position: relative; aspect-ratio: 1.28; }
+
+  /* .pf-wave: dalgalanan yeşil gradient — herhangi bir kutuya/kelimeye/butona uygulanabilir. İçerik <span> içinde olmalı. */
+  .pf-wave { position: relative; overflow: hidden; isolation: isolate; background: linear-gradient(138deg, #93c572 0%, #5fcbb0 44%, #2c7f6f 82%, #215c51 100%); }
+  .pf-wave > span { position: relative; z-index: 3; }
+  .pf-wave::before { content: ""; position: absolute; inset: -40%; filter: blur(var(--wave-blur, 36px)); opacity: .95; animation: pf-swirl 18s linear infinite;
+    background: conic-gradient(from 0deg at 50% 50%, #93c572, #5fcbb0 22%, #215c51 48%, #2c7f6f 66%, #5fcbb0 84%, #93c572); }
+  .pf-wave::after { content: ""; position: absolute; inset: -60% -40%; mix-blend-mode: soft-light; animation: pf-sheen 7s ease-in-out infinite;
+    background: linear-gradient(105deg, transparent 30%, rgba(255,255,255,.35) 42%, rgba(255,255,255,.08) 50%, rgba(255,255,255,.4) 58%, transparent 70%); }
+  .pf-folds { position: absolute; inset: -20%; z-index: 1; opacity: .55; mix-blend-mode: overlay; animation: pf-folds 9s ease-in-out infinite alternate;
+    background: repeating-linear-gradient(162deg, rgba(0,0,0,0) 0 26px, rgba(0,0,0,.35) 26px 34px, rgba(255,255,255,.18) 34px 42px, rgba(0,0,0,0) 42px 70px); background-size: 140% 140%; }
+  .pf-sheet { position: absolute; right: 0; bottom: 0; width: 90%; height: 86%; border-radius: 18px; box-shadow: 0 40px 80px -56px #000; }
+  .pf-wave-word { display: inline-block; vertical-align: baseline; padding: .04em .18em; margin: .14em -.02em; border-radius: .16em; color: #0a0a0a; --wave-blur: 18px; }
+  .pf-wave-btn .pf-folds { background-size: 60% 60%; opacity: .3; }
+  .pf-wave-btn { display: inline-block; color: #0a0a0a; border-radius: 9px; --wave-blur: 10px; }
+  .pf-sheet-tag { position: absolute; right: 15px; bottom: 11px; z-index: 2; display: flex; align-items: center; gap: 8px; font-size: 10px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: #0b1f1a; }
+  .pf-sheet-tag span { width: 22px; height: 1px; background: rgba(9,26,22,.5); display: block; }
+  @keyframes pf-swirl { to { transform: rotate(360deg); } }
+  @keyframes pf-sheen { 0%, 100% { transform: translateX(-45%) skewX(-10deg); } 50% { transform: translateX(45%) skewX(8deg); } }
+  @keyframes pf-folds { 0% { background-position: 0% 0%; transform: scaleY(1) rotate(0deg); } 50% { transform: scaleY(1.08) rotate(-2deg); } 100% { background-position: 100% 60%; transform: scaleY(1) rotate(1.5deg); } }
+
+  /* Kuzey ışıkları — iş kartlarının arka planı */
+  .pf-aurora { position: absolute; inset: 0; z-index: 0; overflow: hidden; background: linear-gradient(180deg, #04070a 0%, #06110f 55%, #0a1b17 100%); }
+  .pf-aurora::before { content: ""; position: absolute; inset: -35% -25%; filter: blur(30px); animation: pf-aurora-a 16s ease-in-out infinite alternate;
+    background:
+      radial-gradient(55% 32% at 28% 38%, rgba(95,203,176,.9), transparent 70%),
+      radial-gradient(48% 30% at 68% 26%, rgba(147,197,114,.75), transparent 70%),
+      radial-gradient(60% 28% at 50% 58%, rgba(44,127,111,.85), transparent 70%),
+      radial-gradient(35% 22% at 85% 55%, rgba(95,203,176,.55), transparent 70%); }
+  .pf-aurora::after { content: ""; position: absolute; inset: -30%; filter: blur(26px); mix-blend-mode: screen; opacity: .9; animation: pf-aurora-b 20s ease-in-out infinite alternate;
+    background: repeating-linear-gradient(98deg, transparent 0 70px, rgba(147,197,114,.22) 100px 130px, rgba(95,203,176,.12) 150px 170px, transparent 200px 260px); }
+  .pf-aurora-stars { position: absolute; inset: 0; z-index: 1; opacity: .7;
+    background:
+      radial-gradient(1px 1px at 12% 22%, rgba(255,255,255,.8), transparent 60%),
+      radial-gradient(1px 1px at 33% 12%, rgba(255,255,255,.6), transparent 60%),
+      radial-gradient(1.5px 1.5px at 58% 18%, rgba(255,255,255,.7), transparent 60%),
+      radial-gradient(1px 1px at 74% 9%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1px 1px at 88% 30%, rgba(255,255,255,.7), transparent 60%),
+      radial-gradient(1px 1px at 45% 40%, rgba(255,255,255,.45), transparent 60%),
+      radial-gradient(1px 1px at 22% 48%, rgba(255,255,255,.5), transparent 60%),
+      radial-gradient(1.5px 1.5px at 66% 46%, rgba(255,255,255,.55), transparent 60%),
+      radial-gradient(1px 1px at 93% 62%, rgba(255,255,255,.4), transparent 60%),
+      radial-gradient(1px 1px at 6% 66%, rgba(255,255,255,.45), transparent 60%); }
+  .pf-aurora-mtn { position: absolute; left: -2%; right: -2%; bottom: -1px; height: 34%; z-index: 2; background: linear-gradient(#070b0a, #040605);
+    clip-path: polygon(0 100%, 0 72%, 6% 58%, 12% 70%, 20% 42%, 27% 60%, 35% 50%, 42% 68%, 50% 34%, 58% 54%, 66% 46%, 74% 64%, 82% 38%, 90% 56%, 100% 44%, 100% 100%); }
+  .pf-aurora > b { position: absolute; inset: 0; z-index: 3; background: linear-gradient(180deg, transparent 55%, rgba(11,11,11,.75) 100%); }
+  @keyframes pf-aurora-a { 0% { transform: translate3d(-4%, 1%, 0) scale(1); } 100% { transform: translate3d(4%, -3%, 0) scale(1.08); } }
+  @keyframes pf-aurora-b { 0% { transform: rotate(-3deg) translateX(-4%); } 100% { transform: rotate(3deg) translateX(4%); } }
+
+  /* ---------- Web development kartı: kodla çizilmiş editör + tarayıcı sahnesi ---------- */
+  .pf-scene { position: absolute; inset: 22px 22px 0; container-type: inline-size; font-family: Inter, sans-serif; color: #ededed; }
+  .pf-scene .pf-aurora { inset: 0; }
+  .pf-scene .pf-aurora::before { filter: blur(10px); inset: -20% -15%; }
+  .pf-scene .pf-aurora::after { filter: blur(8px); }
+
+  /* Editör */
+  .pf-ed { position: absolute; left: 0; top: 0; width: 66%; height: 90%; display: flex; flex-direction: column; border-radius: 1.2cqw; overflow: hidden;
+    background: #0d100f; border: 1px solid rgba(255,255,255,.1); box-shadow: 0 30px 60px -30px #000; }
+  .pf-ed-bar { height: 4.4cqw; flex-shrink: 0; display: flex; align-items: center; gap: .9cqw; padding: 0 1.8cqw; border-bottom: 1px solid #171b19; }
+  .pf-ed-bar i { width: 1.3cqw; height: 1.3cqw; border-radius: 50%; }
+  .pf-ed-bar i:nth-child(1) { background: #e0665c; } .pf-ed-bar i:nth-child(2) { background: #dcb045; } .pf-ed-bar i:nth-child(3) { background: #5fcbb0; }
+  .pf-ed-body { flex: 1; min-height: 0; display: flex; }
+  .pf-ed-side { width: 33%; flex-shrink: 0; border-right: 1px solid #171b19; padding: 1.2cqw 0; font-size: 1.45cqw; color: #9a9f9c; overflow: hidden; }
+  .pf-ed-root { display: flex; align-items: center; gap: .8cqw; padding: .5cqw 1.6cqw 1cqw; font-weight: 500; color: #d4d4d4; }
+  .pf-ed-root svg { width: 1.6cqw; height: 1.6cqw; }
+  .pf-ed-item { display: flex; align-items: center; gap: .7cqw; height: 2.7cqw; padding-right: 1cqw; white-space: nowrap; }
+  .pf-ed-item b { font-weight: 400; width: 1.2cqw; text-align: center; color: #6a6f6c; font-size: 1.4cqw; }
+  .pf-ed-item svg { width: 1.5cqw; height: 1.5cqw; color: #3a5f52; }
+  .pf-ed-item em { font-style: normal; font-size: .95cqw; font-weight: 600; color: #5fcbb0; width: 1.5cqw; text-align: center; letter-spacing: -.02em; }
+  .pf-ed-item em.css { color: #93c572; } .pf-ed-item em.cfg { color: #8a8a8a; }
+  .pf-ed-item.d1 { padding-left: 1.6cqw; } .pf-ed-item.d2 { padding-left: 3cqw; } .pf-ed-item.d3 { padding-left: 5.4cqw; }
+  .pf-ed-item.act { background: #14201c; color: #ededed; box-shadow: inset .25cqw 0 0 #93c572; }
+  .pf-ed-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+  .pf-ed-tabs { height: 3.6cqw; flex-shrink: 0; display: flex; border-bottom: 1px solid #171b19; font-size: 1.4cqw; color: #8a8a8a; }
+  .pf-ed-tabs span { display: flex; align-items: center; gap: .7cqw; padding: 0 1.6cqw; border-right: 1px solid #171b19; }
+  .pf-ed-tabs span.on { background: #0a0c0b; color: #ededed; box-shadow: inset 0 -.2cqw 0 #93c572; }
+  .pf-ed-tabs em { font-style: normal; font-size: .95cqw; font-weight: 600; color: #5fcbb0; }
+  .pf-ed-tabs i { font-style: normal; color: #6a6f6c; margin-left: .3cqw; }
+  .pf-code { margin: 0; padding: 1.4cqw 1.6cqw; font-family: "SF Mono", "JetBrains Mono", Consolas, monospace; font-size: 1.42cqw; line-height: 1.75; color: #d4d4d4; background: #0a0c0b; flex: 1; overflow: hidden; }
+  .pf-code .ln { display: inline-block; width: 2.6cqw; margin-right: 1.4cqw; text-align: right; color: #3e4441; user-select: none; }
+  .pf-code k { color: #c39bdc; } .pf-code v, .pf-code f { color: #5fcbb0; } .pf-code s { color: #93c572; text-decoration: none; } .pf-code t { color: #79b8ff; } .pf-code at { color: #dcb045; }
+  .pf-code-caret { display: inline-block; width: .15cqw; height: 1.6cqw; background: #93c572; vertical-align: -.25cqw; margin-left: .2cqw; animation: om-caret 1s steps(1) infinite; }
+
+  /* Tarayıcı */
+  .pf-web { position: absolute; right: 0; top: 17%; width: 60%; bottom: -3%; display: flex; flex-direction: column; border-radius: 1.2cqw 1.2cqw 0 0; overflow: hidden;
+    background: #0b0d0c; border: 1px solid rgba(255,255,255,.13); border-bottom: none; box-shadow: -20px 30px 70px -30px #000, 0 0 0 1px rgba(0,0,0,.6); }
+  .pf-web-bar { height: 4.2cqw; flex-shrink: 0; display: flex; align-items: center; gap: .8cqw; padding: 0 1.6cqw; border-bottom: 1px solid #171b19; background: #0f1211; }
+  .pf-web-bar i { width: 1.2cqw; height: 1.2cqw; border-radius: 50%; }
+  .pf-web-bar i:nth-child(1) { background: #e0665c; } .pf-web-bar i:nth-child(2) { background: #dcb045; } .pf-web-bar i:nth-child(3) { background: #5fcbb0; }
+  .pf-web-bar b { font-weight: 400; color: #6a6f6c; font-size: 1.5cqw; margin: 0 .3cqw 0 .8cqw; }
+  .pf-web-url { flex: 1; height: 2.5cqw; border-radius: .7cqw; background: #171a19; font-size: 1.25cqw; color: #9a9f9c; display: flex; align-items: center; gap: .7cqw; padding: 0 1.2cqw; white-space: nowrap; }
+  .pf-web-nav { display: flex; align-items: center; gap: 2.2cqw; padding: 1.8cqw 2.6cqw 1.2cqw; font-size: 1.35cqw; color: #9a9f9c; }
+  .pf-web-nav b { font-weight: 600; color: #ededed; font-size: 1.55cqw; margin-right: auto; }
+  .pf-web-hero { display: flex; gap: 2cqw; padding: 0 2.6cqw; align-items: stretch; }
+  .pf-web-copy { flex: 1 1 52%; min-width: 0; padding-top: .8cqw; }
+  .pf-web-pill { display: inline-block; font-size: 1.15cqw; color: #93c572; border: 1px solid #2c5a49; border-radius: 99px; padding: .35cqw 1.1cqw; margin-bottom: 1.4cqw; }
+  .pf-web-h1 { font-size: 3.6cqw; font-weight: 500; line-height: 1.08; letter-spacing: -.03em; color: #ededed; }
+  .pf-web-h1 em { font-style: normal; color: #93c572; }
+  .pf-web-p { margin-top: 1.2cqw; font-size: 1.3cqw; line-height: 1.5; color: #9a9f9c; max-width: 34ch; }
+  .pf-web-btns { display: flex; gap: 1cqw; margin-top: 1.8cqw; font-size: 1.2cqw; font-weight: 500; }
+  .pf-web-btns > span { display: inline-flex; align-items: center; padding: .75cqw 1.6cqw; border-radius: .7cqw; --wave-blur: 8px; }
+  .pf-web-btns .ghost { color: #d4d4d4; border: 1px solid #2a2a2a; }
+  .pf-web-art { flex: 1 1 44%; min-width: 0; position: relative; border-radius: .9cqw; overflow: hidden; min-height: 17cqw; }
+  .pf-web-feat { display: flex; align-items: baseline; justify-content: space-between; padding: 2.6cqw 2.6cqw 1.2cqw; }
+  .pf-web-feat b { font-size: 1.7cqw; font-weight: 500; letter-spacing: -.02em; }
+  .pf-web-feat span { font-size: 1.15cqw; color: #93c572; }
+  .pf-web-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.4cqw; padding: 0 2.6cqw 2cqw; }
+  .pf-web-card { border: 1px solid #1f2422; border-radius: .9cqw; background: #0f1211; padding: 1cqw; }
+  .pf-web-card i { display: block; height: 7cqw; border-radius: .6cqw; margin-bottom: 1cqw; background: #14201c; position: relative; overflow: hidden; }
+  .pf-web-card i::after { content: ""; position: absolute; inset: 0; }
+  .pf-web-card i.c1::after { background: linear-gradient(180deg, transparent 55%, rgba(95,203,176,.35)), repeating-linear-gradient(90deg, transparent 0 14%, rgba(255,255,255,.05) 14% 16%); }
+  .pf-web-card i.c2::after { background: radial-gradient(40% 70% at 50% 60%, rgba(147,197,114,.35), transparent 70%); }
+  .pf-web-card i.c3::after { background: linear-gradient(135deg, rgba(95,203,176,.4), rgba(44,127,111,.2) 50%, transparent); }
+  .pf-web-card b { display: block; font-size: 1.25cqw; font-weight: 500; margin-bottom: .4cqw; }
+  .pf-web-card span { display: block; font-size: 1.02cqw; line-height: 1.4; color: #8a8f8c; }
+
+  /* Rozetler */
+  .pf-badge { position: absolute; z-index: 4; display: flex; align-items: center; gap: 1.2cqw; padding: 1.3cqw 2cqw 1.3cqw 1.4cqw; border-radius: 1.1cqw; font-size: 1.7cqw; font-weight: 500; color: #ededed;
+    background: rgba(12,15,14,.92); border: 1px solid rgba(255,255,255,.12); box-shadow: 0 24px 50px -24px #000, inset 0 1px 0 rgba(255,255,255,.05); backdrop-filter: blur(8px); }
+  .pf-badge svg { width: 3.2cqw; height: 3.2cqw; }
+  .pf-badge-react { right: 3%; top: 4%; }
+  .pf-badge-next { left: -1.5%; bottom: 26%; }
+  .pf-badge-tw { left: 6%; bottom: 8%; }
+
+  /* ---------- Diğer iş kartları: kodla çizilmiş sahneler ---------- */
+  /* Küçük kartlar (dashboard / api): aurora üstünde panel */
+  .pf-mini { position: absolute; left: 18px; right: 18px; top: 16px; bottom: -1px; z-index: 3; border-radius: 8px 8px 0 0; overflow: hidden; container-type: inline-size;
+    background: #0b0d0c; border: 1px solid rgba(255,255,255,.12); border-bottom: none; box-shadow: 0 24px 50px -28px #000; font-family: Inter, sans-serif; color: #ededed; }
+
+  .pf-db-head { display: flex; align-items: flex-start; justify-content: space-between; padding: 2.6cqw 3cqw 1cqw; }
+  .pf-db-kpi em { display: block; font-style: normal; font-size: 2cqw; letter-spacing: .1em; text-transform: uppercase; color: #8a8f8c; margin-bottom: .8cqw; }
+  .pf-db-kpi b { font-size: 4.2cqw; font-weight: 500; letter-spacing: -.02em; }
+  .pf-db-kpi b span { font-size: 2.2cqw; color: #93c572; font-weight: 500; margin-left: .8cqw; }
+  .pf-db-tabs { display: flex; gap: .4cqw; border: 1px solid #222; border-radius: 1cqw; padding: .4cqw; }
+  .pf-db-tabs i { font-style: normal; font-size: 2cqw; color: #8a8f8c; padding: .5cqw 1.6cqw; border-radius: .7cqw; }
+  .pf-db-tabs i.on { background: #1a1f1d; color: #ededed; }
+  .pf-db-chart { display: block; width: 100%; height: 13cqw; margin-top: .6cqw; }
+  .pf-db-bars rect { transform-origin: 50% 100%; transform-box: fill-box; transform: scaleY(0); } .pf-db.is-in .pf-db-bars rect { animation: pf-bar-up .9s cubic-bezier(.2,.7,.2,1) both; animation-delay: calc(var(--i, 0) * 60ms); }
+  .pf-db-line { stroke-dasharray: 600; stroke-dashoffset: 600; } .pf-db.is-in .pf-db-line { animation: pf-draw-long 2.2s ease-out .4s forwards; }
+  @keyframes pf-bar-up { from { transform: scaleY(0); } }
+  @keyframes pf-draw-long { to { stroke-dashoffset: 0; } }
+
+  .pf-api-req, .pf-api-side { font-size: 2.1cqw; }
+  .pf-api-req { display: flex; align-items: center; gap: 1.6cqw; padding: 2cqw 2.6cqw; border-bottom: 1px solid #171b19; background: #0f1211; }
+  .pf-api b { font-size: 1.7cqw; font-weight: 600; letter-spacing: .06em; padding: .45cqw 1.1cqw; border-radius: .6cqw; flex-shrink: 0; }
+  .pf-api b.get { color: #93c572; background: rgba(147,197,114,.12); } .pf-api b.post { color: #5fcbb0; background: rgba(95,203,176,.12); } .pf-api b.del { color: #e0665c; background: rgba(224,102,92,.12); }
+  .pf-api-req span { flex: 1; font-family: "SF Mono", Consolas, monospace; color: #d4d4d4; white-space: nowrap; }
+  .pf-api-req em { font-style: normal; color: #dcb045; }
+  .pf-api-req i { font-style: normal; font-size: 1.9cqw; font-weight: 500; color: #0a0a0a; background: #ededed; padding: .7cqw 1.8cqw; border-radius: .7cqw; }
+  .pf-api-body { display: flex; }
+  .pf-api-side { width: 40%; flex-shrink: 0; border-right: 1px solid #171b19; padding: 1cqw 0; }
+  .pf-api-side span { display: flex; align-items: center; gap: 1cqw; padding: .9cqw 2.6cqw; font-family: "SF Mono", Consolas, monospace; color: #9a9f9c; white-space: nowrap; }
+  .pf-api-side span.on { background: #14201c; color: #ededed; box-shadow: inset .4cqw 0 0 #93c572; }
+  .pf-api-side b { font-size: 1.4cqw; padding: .3cqw .8cqw; }
+  .pf-api-res { margin: 0; padding: 1.6cqw 2.6cqw; flex: 1; font-family: "SF Mono", Consolas, monospace; font-size: 2cqw; line-height: 1.6; color: #d4d4d4; position: relative; }
+  .pf-api-res i { position: absolute; right: 2.4cqw; top: 1.6cqw; font-style: normal; font-family: Inter, sans-serif; font-size: 1.7cqw; color: #93c572; }
+  .pf-api-res k { color: #79b8ff; } .pf-api-res s { color: #93c572; text-decoration: none; } .pf-api-res n { color: #dcb045; }
+
+  /* Marketing: landing page + CMS paneli */
+  .pf-mk, .pf-mb { position: absolute; inset: 0; container-type: inline-size; font-family: Inter, sans-serif; color: #ededed; overflow: hidden; }
+  .pf-mb { z-index: 3; }
+  .pf-mk-page { position: absolute; inset: 0; background: #0b0d0c; }
+  .pf-mk-nav { display: flex; align-items: center; gap: 2.6cqw; padding: 2.4cqw 3.4cqw; font-size: 1.7cqw; color: #9a9f9c; }
+  .pf-mk-nav b { font-weight: 600; color: #ededed; font-size: 2cqw; margin-right: auto; }
+  .pf-mk-nav i { font-style: normal; font-size: 1.55cqw; font-weight: 500; color: #0a0a0a; background: #ededed; padding: .8cqw 1.8cqw; border-radius: .8cqw; }
+  .pf-mk-hero { padding: 2.2cqw 3.4cqw 0; max-width: 62%; }
+  .pf-mk-pill { display: inline-block; font-size: 1.35cqw; color: #93c572; border: 1px solid #2c5a49; border-radius: 99px; padding: .45cqw 1.3cqw; margin-bottom: 1.8cqw; }
+  .pf-mk-h1 { font-size: 5cqw; font-weight: 500; line-height: 1.05; letter-spacing: -.035em; }
+  .pf-mk-h1 em { font-style: normal; color: #93c572; }
+  .pf-mk-p { margin-top: 1.6cqw; font-size: 1.65cqw; line-height: 1.5; color: #9a9f9c; max-width: 40ch; }
+  .pf-mk-btns { display: flex; gap: 1.2cqw; margin-top: 2.4cqw; font-size: 1.55cqw; font-weight: 500; }
+  .pf-mk-btns > span { display: inline-flex; align-items: center; padding: 1cqw 2.2cqw; border-radius: .9cqw; --wave-blur: 8px; }
+  .pf-mk-btns .ghost { color: #d4d4d4; border: 1px solid #2a2a2a; }
+  .pf-mk-logos { position: absolute; left: 3.4cqw; right: 3.4cqw; bottom: 3cqw; display: flex; gap: 4cqw; align-items: center; opacity: .5; }
+  .pf-mk-logos i { height: 1.6cqw; border-radius: 99px; background: #2e3331; }
+  .pf-mk-cms { position: absolute; right: 3cqw; top: 9cqw; width: 34%; padding: 2.2cqw 2.4cqw; border-radius: 1.4cqw; font-size: 1.5cqw;
+    background: rgba(12,15,14,.96); border: 1px solid rgba(255,255,255,.13); box-shadow: -20px 30px 60px -28px #000; }
+  .pf-mk-cms-h { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.8cqw; }
+  .pf-mk-cms-h b { font-weight: 500; font-size: 1.7cqw; } .pf-mk-cms-h span { color: #8a8f8c; font-size: 1.3cqw; }
+  .pf-mk-cms label { display: block; font-size: 1.2cqw; letter-spacing: .1em; text-transform: uppercase; color: #8a8f8c; margin: 1.2cqw 0 .6cqw; }
+  .pf-mk-cms .f { border: 1px solid #262b29; border-radius: .7cqw; padding: .9cqw 1.2cqw; background: #101413; color: #d4d4d4; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pf-mk-cms .f.sw { display: flex; gap: .9cqw; }
+  .pf-mk-cms .f.sw i { width: 2.4cqw; height: 2.4cqw; border-radius: 50%; }
+  .pf-mk-cms .f.sw i.on { box-shadow: 0 0 0 .3cqw #0b0d0c, 0 0 0 .5cqw #93c572; }
+  .pf-mk-pub { margin-top: 2cqw; display: flex; align-items: center; justify-content: center; gap: 1cqw; font-weight: 500; color: #0a0a0a; background: linear-gradient(120deg, #93c572, #5fcbb0); border-radius: .9cqw; padding: 1cqw; }
+  .pf-mk-pub em { width: 1.6cqw; height: 1.6cqw; border-radius: 50%; border: .3cqw solid rgba(10,10,10,.25); border-top-color: #0a0a0a; animation: pf-spin 1s linear infinite; }
+  @keyframes pf-spin { to { transform: rotate(360deg); } }
+
+  /* Mobile: iki büyük telefon, spring giriş + offline -> synced döngüsü (scroll'a girince başlar) */
+  .pf-phone { position: absolute; width: 40%; aspect-ratio: 9 / 17; border-radius: 6cqw; background: #0d100f; border: 1px solid rgba(255,255,255,.14); box-shadow: 0 0 0 .7cqw #1a1d1c, 0 0 0 .9cqw #2a2e2c, 0 40px 80px -24px #000; overflow: hidden; font-size: 1.9cqw; opacity: 0; transform: translateY(40px) scale(.94); }
+  .pf-phone .island { position: absolute; top: 2cqw; left: 50%; width: 10cqw; height: 2.8cqw; margin-left: -5cqw; border-radius: 99px; background: #000; z-index: 2; }
+  .pf-phone.p1 { left: 10%; top: 8%; --cycle: 7s; z-index: 2; }
+  .pf-phone.p2 { left: 52%; top: 15%; opacity: 0; }
+  .pf-mb.is-in .pf-phone.p1 { animation: pf-phone-in .9s cubic-bezier(.34,1.56,.64,1) .1s forwards; }
+  .pf-mb.is-in .pf-phone.p2 { animation: pf-phone-in .9s cubic-bezier(.34,1.56,.64,1) .3s forwards, pf-float 6s ease-in-out 1.3s infinite; }
+  @keyframes pf-phone-in { to { opacity: 1; transform: none; } }
+  @keyframes pf-float { 50% { translate: 0 -7px; } }
+  .pf-mb-top { display: flex; justify-content: space-between; align-items: center; padding: 7.5cqw 3cqw 2cqw; }
+  .pf-mb-top b { font-size: 2.6cqw; font-weight: 500; } .pf-mb-top > span { font-size: 1.7cqw; color: #8a8f8c; }
+  .pf-mb-state { position: relative; display: inline-block; min-width: 8cqw; height: 3.2cqw; }
+  .pf-mb-state i { position: absolute; right: 0; top: 0; font-style: normal; font-size: 1.6cqw; padding: .5cqw 1.3cqw; border-radius: 99px; white-space: nowrap; }
+  .pf-mb-state i.off { color: #d4d4d4; border: 1px solid #333; animation: pf-off var(--cycle) infinite; }
+  .pf-mb-state i.on { color: #0a0a0a; background: #93c572; animation: pf-on var(--cycle) infinite; }
+  .pf-mb-sync { margin: 0 2.4cqw 1.6cqw; padding: 1.8cqw 2cqw; border-radius: 1.6cqw; background: #101413; border: 1px solid #222826; }
+  .pf-mb-sync .bar { height: .7cqw; border-radius: 99px; background: #1c211f; overflow: hidden; margin-bottom: 1.2cqw; }
+  .pf-mb-sync .bar i { display: block; height: 100%; background: linear-gradient(90deg, #93c572, #5fcbb0); animation: pf-fill var(--cycle) infinite; transform-origin: left; }
+  .pf-mb-sync span { position: relative; display: block; height: 2.2cqw; font-size: 1.6cqw; }
+  .pf-mb-sync span b { position: absolute; left: 0; top: 0; font-weight: 500; white-space: nowrap; }
+  .pf-mb-sync span b.off { color: #9a9f9c; animation: pf-off var(--cycle) infinite; } .pf-mb-sync span b.on { color: #93c572; animation: pf-on var(--cycle) infinite; }
+  .pf-mb-list { padding: 0 2.4cqw; }
+  .pf-mb-list .row { display: flex; align-items: center; gap: 1.8cqw; padding: 1.9cqw 1cqw; border-bottom: 1px solid #171b19; opacity: 0; transform: translateX(-18px); }
+  .pf-mb.is-in .pf-mb-list .row { animation: pf-row-in .6s cubic-bezier(.34,1.56,.64,1) forwards; }
+  .pf-mb.is-in .row:nth-child(1) { animation-delay: .75s; } .pf-mb.is-in .row:nth-child(2) { animation-delay: .87s; } .pf-mb.is-in .row:nth-child(3) { animation-delay: .99s; } .pf-mb.is-in .row:nth-child(4) { animation-delay: 1.11s; }
+  @keyframes pf-row-in { to { opacity: 1; transform: none; } }
+  .pf-mb-list .row i { width: 4.8cqw; height: 4.8cqw; border-radius: 1.2cqw; background: #14201c; flex-shrink: 0; }
+  .pf-mb-list .row b { display: block; font-weight: 500; font-size: 1.9cqw; } .pf-mb-list .row span { font-size: 1.5cqw; color: #8a8f8c; }
+  .pf-mb-list .row em { margin-left: auto; width: 1.9cqw; height: 1.9cqw; border-radius: 50%; border: 1px solid #555; animation: pf-dot var(--cycle) infinite; }
+  .pf-mb-list .row:nth-child(2) em { animation-delay: .12s; } .pf-mb-list .row:nth-child(3) em { animation-delay: .24s; } .pf-mb-list .row:nth-child(4) em { animation-delay: .36s; }
+  .pf-mb-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6cqw; padding: 0 2.4cqw; }
+  .pf-mb-grid i { height: 9cqw; border-radius: 1.4cqw; background: #14201c; border: 1px solid #1f2c27; }
+  .pf-mb-line { height: 1.5cqw; margin: 2.4cqw 2.4cqw 0; border-radius: 99px; background: #1c211f; } .pf-mb-line.s { width: 55%; margin-top: 1.4cqw; }
+  @keyframes pf-off { 0%, 55% { opacity: 1; } 62%, 100% { opacity: 0; } }
+  @keyframes pf-on { 0%, 55% { opacity: 0; transform: translateY(.4cqw); } 62%, 100% { opacity: 1; transform: none; } }
+  @keyframes pf-fill { 0% { transform: scaleX(0); } 12% { transform: scaleX(0); } 58% { transform: scaleX(1); } 100% { transform: scaleX(1); } }
+  @keyframes pf-dot { 0%, 55% { background: transparent; border-color: #555; } 62%, 100% { background: #93c572; border-color: #93c572; } }
+
+  /* ---------- Hero sağ alan: bento grid ---------- */
+  .pf-stage { container-type: inline-size; }
+  @media (max-width: 640px) { .pf-stage { aspect-ratio: 1.05; } .pf-bento { grid-template-rows: 1.1fr 1fr .6fr; } }
+  .pf-bento { position: absolute; inset: 0; display: grid; gap: clamp(10px, 2.2cqw, 14px); grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1.15fr 1fr .62fr;
+    grid-template-areas: "deploy deploy ring" "heat up wave" "stack stack wave"; font-family: Inter, sans-serif; color: #ededed; }
+  .pf-tile { position: relative; min-width: 0; min-height: 0; overflow: hidden; border-radius: 14px; background: #0c0c0c; border: 1px solid #242424; padding: clamp(12px, 2.6cqw, 18px); display: flex; flex-direction: column;
+    opacity: 0; transform: translateY(14px); animation: pf-tile-in .8s cubic-bezier(.2,.7,.2,1) forwards; }
+  .pf-tile:nth-child(1) { animation-delay: .1s; } .pf-tile:nth-child(2) { animation-delay: .2s; } .pf-tile:nth-child(3) { animation-delay: .3s; } .pf-tile:nth-child(4) { animation-delay: .4s; } .pf-tile:nth-child(5) { animation-delay: .5s; } .pf-tile:nth-child(6) { animation-delay: .6s; }
+  @keyframes pf-tile-in { to { opacity: 1; transform: none; } }
+  .t-deploy { grid-area: deploy; } .t-ring { grid-area: ring; } .t-heat { grid-area: heat; } .t-up { grid-area: up; } .t-wave { grid-area: wave; } .t-stack { grid-area: stack; }
+  .pf-tile-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: clamp(6px, 1.4cqw, 10px); }
+  .pf-tile-h em { font-style: normal; font-size: clamp(9px, 1.9cqw, 11px); letter-spacing: .12em; text-transform: uppercase; color: #8a8a8a; white-space: nowrap; }
+  .pf-pill { font-size: clamp(9px, 1.8cqw, 10.5px); font-weight: 500; color: #93c572; background: rgba(147,197,114,.1); border: 1px solid rgba(147,197,114,.25); border-radius: 99px; padding: 2px 8px; white-space: nowrap; }
+  .pf-tile small { margin-top: auto; font-size: clamp(9px, 1.9cqw, 11px); color: #8a8a8a; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .pf-commits { position: relative; height: 1.4em; }
+  .pf-commits span { position: absolute; left: 0; right: 0; top: 0; opacity: 0; animation: pf-commit 8s ease-in-out infinite; }
+  .pf-commits span:nth-child(2) { animation-delay: 2.66s; } .pf-commits span:nth-child(3) { animation-delay: 5.33s; }
+  @keyframes pf-commit { 0% { opacity: 0; transform: translateY(6px); } 4% { opacity: 1; transform: none; } 30% { opacity: 1; transform: none; } 34% { opacity: 0; transform: translateY(-6px); } 100% { opacity: 0; } }
+  .pf-tile small code { font-family: "SF Mono", Consolas, monospace; color: #d4d4d4; }
+
+  .t-deploy > b { font-size: clamp(13px, 3cqw, 17px); font-weight: 500; letter-spacing: -.01em; }
+  .t-deploy > b i { font-style: normal; color: #4a4a4a; margin: 0 2px; }
+  .pf-seg { display: flex; gap: 3px; height: 8px; margin: clamp(8px, 2cqw, 14px) 0 8px; }
+  .pf-seg i { border-radius: 3px; transform-origin: left; animation: pf-seg 8s cubic-bezier(.2,.7,.2,1) .5s infinite both; }
+  .pf-seg i:nth-child(2) { animation-delay: .7s; } .pf-seg i:nth-child(3) { animation-delay: .9s; }
+  @keyframes pf-seg { 0% { transform: scaleX(0); } 12% { transform: scaleX(1); } 88% { transform: scaleX(1); opacity: 1; } 94% { opacity: 0; transform: scaleX(1); } 100% { opacity: 0; transform: scaleX(0); } }
+  .pf-legend { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: clamp(9px, 1.9cqw, 11px); color: #8f8f8f; }
+  .pf-legend span { display: flex; align-items: center; gap: 5px; white-space: nowrap; }
+  .pf-legend i { width: 6px; height: 6px; border-radius: 2px; }
+
+  .pf-ring { position: relative; width: 62%; max-width: 92px; margin: 2px auto 0; }
+  .pf-ring svg { display: block; width: 100%; }
+  .pf-ring .arc { stroke-dasharray: 170; stroke-dashoffset: 170; animation: pf-arc 8s cubic-bezier(.2,.7,.2,1) .6s infinite both; }
+  @keyframes pf-arc { 0% { stroke-dashoffset: 170; } 22% { stroke-dashoffset: 0; } 86% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 170; } }
+  .pf-ring b { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: clamp(16px, 4.2cqw, 24px); font-weight: 500; letter-spacing: -.03em; }
+  .pf-ring-l { display: flex; justify-content: space-between; margin-top: auto; padding-top: 8px; font-size: clamp(8.5px, 1.8cqw, 10.5px); color: #8a8a8a; }
+  .pf-ring-l b { color: #d4d4d4; font-weight: 500; }
+
+  .pf-heat { display: grid; grid-template-columns: repeat(12, 1fr); grid-auto-rows: 1fr; gap: 3px; aspect-ratio: 12 / 7; margin-bottom: 8px; }
+  .pf-heat i { border-radius: 2px; background: #1a1a1a; opacity: 0; animation: pf-cell 8s ease-out infinite both; animation-delay: calc(.5s + var(--i) * 14ms); }
+  .pf-heat i.l1 { background: #1f3a2f; } .pf-heat i.l2 { background: #2c7f6f; } .pf-heat i.l3 { background: #5fcbb0; } .pf-heat i.l4 { background: #93c572; }
+  @keyframes pf-cell { 0% { opacity: 0; transform: scale(.6); } 6% { opacity: 1; transform: none; } 86% { opacity: 1; } 92% { opacity: 0; } 100% { opacity: 0; } }
+
+  .pf-big { font-size: clamp(18px, 4.6cqw, 26px); font-weight: 500; letter-spacing: -.03em; color: #ededed; }
+  .pf-spark { display: block; width: 100%; height: clamp(26px, 7cqw, 40px); margin-top: auto; }
+  .pf-spark .line { stroke-dasharray: 200; stroke-dashoffset: 200; animation: pf-spark 8s ease-out .7s infinite both; }
+  .pf-spark .fill { opacity: 0; animation: pf-fill-in 8s ease-out .7s infinite both; }
+  @keyframes pf-spark { 0% { stroke-dashoffset: 200; } 24% { stroke-dashoffset: 0; } 86% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 200; } }
+  @keyframes pf-fill-in { 0%, 20% { opacity: 0; } 32% { opacity: 1; } 86% { opacity: 1; } 96%, 100% { opacity: 0; } }
+
+  .t-wave { justify-content: flex-end; border-color: transparent; --wave-blur: 22px; color: #0a0a0a; }
+  .t-wave > span { display: block; }
+  .t-wave b { display: block; font-size: clamp(30px, 8cqw, 46px); font-weight: 500; letter-spacing: -.04em; line-height: 1; }
+  .t-wave em { display: block; font-style: normal; font-size: clamp(10px, 2.1cqw, 12px); font-weight: 500; line-height: 1.3; margin-top: 6px; color: rgba(10,10,10,.8); }
+  .t-wave .pf-folds { opacity: .35; }
+
+  .pf-stack { display: flex; flex-wrap: wrap; gap: 5px; overflow: hidden; }
+  .pf-stack span { font-size: clamp(9px, 1.9cqw, 11px); color: #b4b4b4; border: 1px solid #262626; border-radius: 99px; padding: 3px 9px; white-space: nowrap; }
+</style>
+</head>
+<body>
+
+<div style="background:#0a0a0a;color:#ededed;font-family:'Inter','Helvetica Neue',Helvetica,Arial,sans-serif;font-size:16px;line-height:1.5;min-height:100vh;position:relative">
+
+  <canvas data-pf-bg="1" style="position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none"></canvas>
+
+  <header style="position:sticky;top:0;z-index:30;background:rgba(10,10,10,0.86);backdrop-filter:blur(12px)">
+    <div style="max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,40px);height:64px;display:flex;align-items:center;justify-content:space-between;gap:24px">
+      <a href="#top" style="font-size:15px;font-weight:500;letter-spacing:-0.01em;flex-shrink:0">Can Bayır</a>
+      <nav style="display:flex;align-items:center;gap:clamp(14px,2.4vw,30px);flex-wrap:wrap">
+        <a href="#work" style="font-size:14px;color:#8f8f8f">Work</a>
+        <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" style="font-size:14px;color:#8f8f8f">GitHub</a>
+        <a href="#approach" style="font-size:14px;color:#8f8f8f">Approach</a>
+        <a href="#about" style="font-size:14px;color:#8f8f8f">About</a>
+        <a href="mailto:canbayirr055@gmail.com" style="font-size:13.5px;font-weight:500;color:#0a0a0a;background:#ededed;padding:8px 14px;border-radius:8px">Email me</a>
+      </nav>
+    </div>
+    <div style="height:1px;background:#161616"></div>
+  </header>
+
+  <main id="top" style="position:relative;z-index:1;max-width:1240px;margin:0 auto;padding:0 clamp(20px,4vw,40px)">
+
+    <section style="position:relative;overflow:hidden;display:flex;flex-wrap:wrap;gap:clamp(32px,4.5vw,56px);align-items:center;padding:clamp(48px,6vw,88px) 0 clamp(48px,5.5vw,80px)">
+
+      <div style="position:relative;flex:1 1 340px;min-width:0">
+        <div style="display:flex;align-items:flex-start;gap:16px;margin-bottom:30px">
+          <div class="pf-img pf-avatar">
+            <!-- Kendi fotoğrafını images/avatar.jpg olarak koy -->
+            <img src="images/avatar.jpg" alt="Can Bayır" onerror="this.setAttribute('data-missing','')">
+            <span>CB</span>
+          </div>
+          <div style="align-self:center">
+            <div style="font-size:13px;font-weight:500">Can Bayır</div>
+            <div style="font-size:11.5px;color:#8a8a8a">Full-stack developer · .NET &amp; React</div>
+          </div>
+        </div>
+        <h1 style="margin:0;font-size:clamp(2.8rem,5.4vw,4.7rem);line-height:1.02;letter-spacing:-0.04em;font-weight:500;text-wrap:balance">
+          Design &amp; web <span class="pf-wave pf-wave-word"><span>development</span><i class="pf-folds"></i></span> that ships.
+        </h1>
+        <p style="margin:22px 0 0;font-size:clamp(1rem,1.25vw,1.12rem);color:#8f8f8f;max-width:40ch;text-wrap:pretty">
+          Full-stack developer. I take products from the first prototype to the release that goes live — ASP.NET Core on the back, React and Next.js on the front.
+        </p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:30px">
+          <a href="#work" style="font-size:14px;font-weight:500;color:#0a0a0a;background:#ededed;padding:11px 20px;border-radius:9px">View selected work</a>
+          <a href="mailto:canbayirr055@gmail.com" style="font-size:14px;font-weight:500;color:#ededed;border:1px solid #2a2a2a;padding:11px 20px;border-radius:9px">Start a project</a>
+        </div>
+        <p style="margin:28px 0 0;font-size:11.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">
+          <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" style="color:#8a8a8a">github.com/Einaar5</a> &nbsp;/&nbsp; .NET &amp; React
+        </p>
+      </div>
+
+      <div style="position:relative;flex:1.35 1 420px;min-width:0">
+        <div class="pf-stage" aria-hidden="true">
+          <div class="pf-bento">
+
+            <div class="pf-tile t-deploy">
+              <div class="pf-tile-h"><em>Latest deploy</em><span class="pf-pill">Production</span></div>
+              <b>einaar5.github.io <i>·</i> main</b>
+              <div class="pf-seg"><i style="flex:12;background:#93c572"></i><i style="flex:18;background:#5fcbb0"></i><i style="flex:6;background:#2c7f6f"></i></div>
+              <div class="pf-legend"><span><i style="background:#93c572"></i>Build 12s</span><span><i style="background:#5fcbb0"></i>Test 18s</span><span><i style="background:#2c7f6f"></i>Deploy 6s</span></div>
+              <small class="pf-commits"><span><code>a41f2c</code> · feat: checkout flow · 2 min ago</span><span><code>c9e07b</code> · fix: cache headers · 41 min ago</span><span><code>58d1aa</code> · chore: bump deps · 3 h ago</span></small>
+            </div>
+
+            <div class="pf-tile t-ring">
+              <div class="pf-tile-h"><em>Lighthouse</em></div>
+              <div class="pf-ring">
+                <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="#1e1e1e" stroke-width="4"/><circle class="arc" cx="32" cy="32" r="27" fill="none" stroke="#93c572" stroke-width="4" stroke-linecap="round" transform="rotate(-90 32 32)"/></svg>
+                <b>100</b>
+              </div>
+              <div class="pf-ring-l"><span>Perf <b>100</b></span><span>A11y <b>100</b></span><span>SEO <b>100</b></span></div>
+            </div>
+
+            <div class="pf-tile t-heat">
+              <div class="pf-tile-h"><em>Commits</em></div>
+              <div class="pf-heat"><i class="l0" style="--i:0"></i><i class="l1" style="--i:1"></i><i class="l2" style="--i:2"></i><i class="l1" style="--i:3"></i><i class="l3" style="--i:4"></i><i class="l2" style="--i:5"></i><i class="l3" style="--i:6"></i><i class="l4" style="--i:7"></i><i class="l4" style="--i:8"></i><i class="l2" style="--i:9"></i><i class="l3" style="--i:10"></i><i class="l1" style="--i:11"></i><i class="l1" style="--i:12"></i><i class="l2" style="--i:13"></i><i class="l3" style="--i:14"></i><i class="l2" style="--i:15"></i><i class="l4" style="--i:16"></i><i class="l3" style="--i:17"></i><i class="l4" style="--i:18"></i><i class="l1" style="--i:19"></i><i class="l2" style="--i:20"></i><i class="l1" style="--i:21"></i><i class="l3" style="--i:22"></i><i class="l2" style="--i:23"></i><i class="l2" style="--i:24"></i><i class="l3" style="--i:25"></i><i class="l1" style="--i:26"></i><i class="l3" style="--i:27"></i><i class="l2" style="--i:28"></i><i class="l4" style="--i:29"></i><i class="l2" style="--i:30"></i><i class="l1" style="--i:31"></i><i class="l3" style="--i:32"></i><i class="l1" style="--i:33"></i><i class="l4" style="--i:34"></i><i class="l2" style="--i:35"></i><i class="l1" style="--i:36"></i><i class="l1" style="--i:37"></i><i class="l2" style="--i:38"></i><i class="l2" style="--i:39"></i><i class="l3" style="--i:40"></i><i class="l4" style="--i:41"></i><i class="l3" style="--i:42"></i><i class="l2" style="--i:43"></i><i class="l1" style="--i:44"></i><i class="l3" style="--i:45"></i><i class="l1" style="--i:46"></i><i class="l4" style="--i:47"></i><i class="l0" style="--i:48"></i><i class="l2" style="--i:49"></i><i class="l1" style="--i:50"></i><i class="l3" style="--i:51"></i><i class="l1" style="--i:52"></i><i class="l4" style="--i:53"></i><i class="l2" style="--i:54"></i><i class="l3" style="--i:55"></i><i class="l2" style="--i:56"></i><i class="l4" style="--i:57"></i><i class="l1" style="--i:58"></i><i class="l3" style="--i:59"></i><i class="l2" style="--i:60"></i><i class="l1" style="--i:61"></i><i class="l3" style="--i:62"></i><i class="l1" style="--i:63"></i><i class="l4" style="--i:64"></i><i class="l2" style="--i:65"></i><i class="l4" style="--i:66"></i><i class="l1" style="--i:67"></i><i class="l3" style="--i:68"></i><i class="l2" style="--i:69"></i><i class="l2" style="--i:70"></i><i class="l1" style="--i:71"></i><i class="l1" style="--i:72"></i><i class="l3" style="--i:73"></i><i class="l2" style="--i:74"></i><i class="l4" style="--i:75"></i><i class="l2" style="--i:76"></i><i class="l1" style="--i:77"></i><i class="l3" style="--i:78"></i><i class="l1" style="--i:79"></i><i class="l2" style="--i:80"></i><i class="l1" style="--i:81"></i><i class="l4" style="--i:82"></i><i class="l3" style="--i:83"></i></div>
+            </div>
+
+            <div class="pf-tile t-up">
+              <div class="pf-tile-h"><em>Uptime · 30 days</em></div>
+              <b class="pf-big">99.98%</b>
+              <svg class="pf-spark" viewBox="0 0 120 32" preserveAspectRatio="none"><path class="fill" d="M0 20 L10 18 L20 21 L30 14 L40 16 L50 10 L60 13 L70 8 L80 11 L90 6 L100 9 L110 4 L120 6 L120 32 L0 32 Z" fill="url(#pfsg)"/><path class="line" d="M0 20 L10 18 L20 21 L30 14 L40 16 L50 10 L60 13 L70 8 L80 11 L90 6 L100 9 L110 4 L120 6" fill="none" stroke="#5fcbb0" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><defs><linearGradient id="pfsg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fcbb0" stop-opacity=".35"/><stop offset="1" stop-color="#5fcbb0" stop-opacity="0"/></linearGradient></defs></svg>
+            </div>
+
+            <div class="pf-tile t-wave pf-wave">
+              <span><b>24</b><em>projects shipped<br>to production</em></span>
+              <i class="pf-folds"></i>
+            </div>
+
+            <div class="pf-tile t-stack">
+              <div class="pf-tile-h"><em>Stack</em></div>
+              <div class="pf-stack"><span>C#</span><span>.NET Core</span><span>React</span><span>Next.js</span><span>Node</span><span>Tailwind</span></div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section style="border-top:1px solid #161616;border-bottom:1px solid #161616;padding:22px 0;background:rgba(10,10,10,0.72);overflow:hidden">
+      <div style="display:flex;width:max-content;animation:om-marquee 34s linear infinite">
+        <div style="display:flex;align-items:center;gap:30px;padding-right:30px"><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">C#</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">.NET Core</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">ASP.NET MVC</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Entity Framework</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">MSSQL</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">TypeScript</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">React</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Next.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Node.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Tailwind</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Vue.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Flutter</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Firebase</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Git</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span></div>
+        <div style="display:flex;align-items:center;gap:30px;padding-right:30px"><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">C#</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">.NET Core</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">ASP.NET MVC</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Entity Framework</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">MSSQL</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">TypeScript</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">React</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Next.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Node.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Tailwind</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Vue.js</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Flutter</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Firebase</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span><span style="font-size:15px;font-weight:500;color:#8a8a8a;white-space:nowrap">Git</span><span style="width:1px;height:13px;background:#242424;display:block;flex-shrink:0"></span></div>
+      </div>
+    </section>
+
+    <section id="work" style="padding:clamp(88px,10vw,144px) 0">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:36px">
+        <div>
+          <p style="margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Selected work</p>
+          <h2 style="margin:0;font-size:clamp(1.6rem,2.8vw,2.3rem);font-weight:500;letter-spacing:-0.03em;line-height:1.1;text-wrap:pretty">Projects taken from empty repo to production.</h2>
+        </div>
+        <a href="mailto:canbayirr055@gmail.com" style="font-size:14px;color:#8f8f8f;border-bottom:1px solid #2a2a2a;padding-bottom:3px">Ask for details</a>
+      </div>
+
+      <div style="display:flex;flex-direction:column;gap:22px">
+
+        <div style="display:flex;flex-wrap:wrap;gap:22px">
+          <div style="flex:1.75 1 420px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#5fcbb0 32%,#24544a 64%,#141414 100%)">
+            <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
+              <div style="position:relative;flex:1;min-height:clamp(250px,62vw,380px);overflow:hidden;background:#0b0b0b">
+                <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
+                <!-- Kodla çizilmiş sahne: editör + tarayıcı + rozetler -->
+                <div class="pf-scene" aria-hidden="true">
+
+                  <div class="pf-ed">
+                    <div class="pf-ed-bar"><i></i><i></i><i></i></div>
+                    <div class="pf-ed-body">
+                      <div class="pf-ed-side">
+                        <div class="pf-ed-root"><svg viewBox="0 0 12 12"><path d="M2 3h3l1 1h4v5H2z" fill="none" stroke="currentColor" stroke-width="1"/></svg>EinarTask</div>
+                        <div class="pf-ed-item d1 open"><b>⌄</b><svg viewBox="0 0 12 12"><path d="M1.5 3h3l1 1h5v5h-9z" fill="currentColor"/></svg>Controllers</div>
+                        <div class="pf-ed-item d2 act"><em>C#</em>HomeController.cs</div>
+                        <div class="pf-ed-item d2"><em>C#</em>TasksController.cs</div>
+                        <div class="pf-ed-item d1 open"><b>⌄</b><svg viewBox="0 0 12 12"><path d="M1.5 3h3l1 1h5v5h-9z" fill="currentColor"/></svg>Models</div>
+                        <div class="pf-ed-item d2"><em>C#</em>TaskItem.cs</div>
+                        <div class="pf-ed-item d1 open"><b>⌄</b><svg viewBox="0 0 12 12"><path d="M1.5 3h3l1 1h5v5h-9z" fill="currentColor"/></svg>Views</div>
+                        <div class="pf-ed-item d2"><em class="css">@</em>Index.cshtml</div>
+                        <div class="pf-ed-item d2"><em class="css">@</em>_Layout.cshtml</div>
+                        <div class="pf-ed-item d1"><b>›</b><svg viewBox="0 0 12 12"><path d="M1.5 3h3l1 1h5v5h-9z" fill="currentColor"/></svg>Data</div>
+                        <div class="pf-ed-item d1"><b>›</b><svg viewBox="0 0 12 12"><path d="M1.5 3h3l1 1h5v5h-9z" fill="currentColor"/></svg>wwwroot</div>
+                        <div class="pf-ed-item d1"><em class="cfg">{}</em>appsettings.json</div>
+                        <div class="pf-ed-item d1"><em>C#</em>Program.cs</div>
+                      </div>
+                      <div class="pf-ed-main">
+                        <div class="pf-ed-tabs"><span class="on"><em>C#</em>HomeController.cs <i>×</i></span></div>
+                        <pre class="pf-code"><span class="ln">1</span><k>using</k> <v>Microsoft.AspNetCore.Mvc</v>;
+<span class="ln">2</span><k>using</k> <v>EinarTask.Data</v>;
+<span class="ln">3</span>
+<span class="ln">4</span><k>public class</k> <f>HomeController</f> : <v>Controller</v>
+<span class="ln">5</span>{
+<span class="ln">6</span>  <k>private readonly</k> <v>AppDbContext</v> _db;
+<span class="ln">7</span>  <k>public</k> <f>HomeController</f>(<v>AppDbContext</v> db) => _db = db;
+<span class="ln">8</span>
+<span class="ln">9</span>  <k>public async</k> <v>Task</v>&lt;<v>IActionResult</v>&gt; <f>Index</f>()
+<span class="ln">10</span>  {
+<span class="ln">11</span>    <k>var</k> tasks = <k>await</k> _db.Tasks.<f>OrderBy</f>(t => t.Due).<f>ToListAsync</f>();
+<span class="ln">12</span>    <k>return</k> <f>View</f>(tasks);
+<span class="ln">13</span>  }
+<span class="ln">14</span>}<i class="pf-code-caret"></i></pre>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="pf-web">
+                    <div class="pf-web-bar"><i></i><i></i><i></i><b>←</b><div class="pf-web-url"><svg width="7" height="9" viewBox="0 0 9 11" fill="none"><rect x="1" y="4.5" width="7" height="6" rx="1.2" stroke="#6a6a6a"/><path d="M2.5 4.5V3a2 2 0 0 1 4 0v1.5" stroke="#6a6a6a"/></svg>https://einaar5.github.io</div></div>
+                    <div class="pf-web-nav"><b>Can Bayır</b><span>Home</span><span>Projects</span><span>About</span><span>Contact</span></div>
+                    <div class="pf-web-hero">
+                      <div class="pf-web-copy">
+                        <div class="pf-web-pill">Hi, I'm Can · .NET</div>
+                        <div class="pf-web-h1">Building digital<br><em>experiences</em></div>
+                        <div class="pf-web-p">A .NET Core developer building clean, fast and modern web applications.</div>
+                        <div class="pf-web-btns"><span class="pf-wave pf-wave-btn"><span>View my work →</span></span><span class="ghost">Get in touch</span></div>
+                      </div>
+                      <div class="pf-web-art"><div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div></div>
+                    </div>
+                    <div class="pf-web-feat"><b>Featured Projects</b><span>View all →</span></div>
+                    <div class="pf-web-cards">
+                      <div class="pf-web-card"><i class="c1"></i><b>EinarTask</b><span>Task management on ASP.NET Core MVC with EF Core and MSSQL.</span></div>
+                      <div class="pf-web-card"><i class="c2"></i><b>Mobile App</b><span>A cross-platform Flutter app with Firebase sync.</span></div>
+                      <div class="pf-web-card"><i class="c3"></i><b>Portfolio Website</b><span>This site — hand-built, no frameworks, shipped.</span></div>
+                    </div>
+                  </div>
+
+                  <div class="pf-badge pf-badge-react">
+                    <svg viewBox="0 0 32 32"><rect x="3" y="3" width="26" height="26" rx="7" fill="#14201c" stroke="#5fcbb0" stroke-width="1.2"/><text x="16" y="20.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" font-weight="600" fill="#5fcbb0">.NET</text></svg>.NET Core
+                  </div>
+                  <div class="pf-badge pf-badge-next">
+                    <svg viewBox="0 0 32 32"><path d="M16 2.5 28 9.5v13L16 29.5 4 22.5v-13z" fill="#14201c" stroke="#93c572" stroke-width="1.2"/><text x="16" y="20.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="11" font-weight="600" fill="#93c572">C#</text></svg>C#
+                  </div>
+                  <div class="pf-badge pf-badge-tw">
+                    <svg viewBox="0 0 32 32" fill="none" stroke="#5fcbb0" stroke-width="1.3"><ellipse cx="16" cy="8" rx="10" ry="4"/><path d="M6 8v16c0 2.2 4.5 4 10 4s10-1.8 10-4V8"/><path d="M6 16c0 2.2 4.5 4 10 4s10-1.8 10-4"/></svg>MSSQL
+                  </div>
+
+                </div>
+              </div>
+              <div style="padding:24px 24px 26px">
+                <p style="margin:0 0 10px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#93c572">Core service</p>
+                <h3 style="margin:0 0 10px;font-size:clamp(1.25rem,2vw,1.7rem);font-weight:500;letter-spacing:-0.025em">Web development</h3>
+                <p style="margin:0 0 18px;font-size:14.5px;color:#8f8f8f;max-width:52ch;text-wrap:pretty">Web apps on ASP.NET Core MVC — designed, implemented and deployed by one person, from the data model to the last pixel.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">ASP.NET Core</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">C#</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Razor</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">MSSQL</span></div>
+              </div>
+            </article>
+          </div>
+
+          <div style="flex:1 1 280px;min-width:0;display:flex;flex-direction:column;gap:22px">
+            <div style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#93c572 36%,#2c6b3f 68%,#141414 100%)">
+              <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
+                <div style="position:relative;height:136px;overflow:hidden;flex-shrink:0">
+                  <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
+                  <div class="pf-mini pf-db" data-reveal>
+  <div class="pf-db-head">
+    <div class="pf-db-kpi"><em>Revenue · last 30 days</em><b>$48.2k <span>↑ 12.4%</span></b></div>
+    <div class="pf-db-tabs"><i class="on">30d</i><i>90d</i><i>1y</i></div>
+  </div>
+  <svg class="pf-db-chart" viewBox="0 0 400 92" preserveAspectRatio="none">
+    <line x1="0" y1="22" x2="400" y2="22" stroke="#1c1f1e" vector-effect="non-scaling-stroke"/>
+    <line x1="0" y1="46" x2="400" y2="46" stroke="#1c1f1e" vector-effect="non-scaling-stroke"/>
+    <line x1="0" y1="70" x2="400" y2="70" stroke="#1c1f1e" vector-effect="non-scaling-stroke"/>
+    <g class="pf-db-bars" fill="url(#pfdbg)">
+      <rect style="--i:0" x="8" y="62" width="16" height="30" rx="2"/><rect style="--i:1" x="36" y="48" width="16" height="44" rx="2"/><rect style="--i:2" x="64" y="54" width="16" height="38" rx="2"/><rect style="--i:3" x="92" y="40" width="16" height="52" rx="2"/><rect style="--i:4" x="120" y="32" width="16" height="60" rx="2"/><rect style="--i:5" x="148" y="44" width="16" height="48" rx="2"/><rect style="--i:6" x="176" y="26" width="16" height="66" rx="2"/><rect style="--i:7" x="204" y="34" width="16" height="58" rx="2"/><rect style="--i:8" x="232" y="20" width="16" height="72" rx="2"/><rect style="--i:9" x="260" y="28" width="16" height="64" rx="2"/><rect style="--i:10" x="288" y="12" width="16" height="80" rx="2"/><rect style="--i:11" x="316" y="22" width="16" height="70" rx="2"/><rect style="--i:12" x="344" y="6" width="16" height="86" rx="2"/><rect style="--i:13" x="372" y="14" width="16" height="78" rx="2"/>
+    </g>
+    <path class="pf-db-line" d="M16 70 L44 58 L72 62 L100 50 L128 44 L156 52 L184 38 L212 44 L240 32 L268 36 L296 24 L324 30 L352 16 L380 22" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/>
+    <defs><linearGradient id="pfdbg" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5fcbb0"/><stop offset="1" stop-color="#2c7f6f" stop-opacity=".55"/></linearGradient></defs>
+  </svg>
+</div>
+                </div>
+                <div style="padding:18px 20px 20px">
+                  <h3 style="margin:0 0 7px;font-size:16px;font-weight:500;letter-spacing:-0.015em">Dashboards &amp; data</h3>
+                  <p style="margin:0 0 14px;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">Analytics screens backed by Entity Framework and one well-indexed MSSQL database.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">EF Core</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">MSSQL</span></div>
+                </div>
+              </article>
+            </div>
+            <div style="flex:1;padding:2px;border-radius:16px;background:linear-gradient(135deg,#2c7f6f,#5fcbb0 40%,#93c572 74%,#141414 100%)">
+              <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%;display:flex;flex-direction:column">
+                <div style="position:relative;height:136px;overflow:hidden;flex-shrink:0">
+                  <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
+                  <div class="pf-mini pf-api">
+  <div class="pf-api-req"><b class="get">GET</b><span>/v1/projects/<em>{id}</em></span><i>Send</i></div>
+  <div class="pf-api-body">
+    <div class="pf-api-side">
+      <span class="on"><b class="get">GET</b>/projects/{id}</span>
+      <span><b class="post">POST</b>/projects</span>
+      <span><b class="get">GET</b>/deploys</span>
+      <span><b class="del">DEL</b>/tokens/{id}</span>
+    </div>
+    <pre class="pf-api-res"><i>200 OK · 38 ms</i>{
+  <k>"id"</k>: <s>"prj_8f2a"</s>,
+  <k>"name"</k>: <s>"Nova"</s>,
+  <k>"status"</k>: <s>"live"</s>,
+  <k>"deploys"</k>: <n>42</n>
+}</pre>
+  </div>
+</div>
+                </div>
+                <div style="padding:18px 20px 20px">
+                  <h3 style="margin:0 0 7px;font-size:16px;font-weight:500;letter-spacing:-0.015em">API &amp; documentation</h3>
+                  <p style="margin:0 0 14px;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">ASP.NET Web APIs with Swagger docs and a live request playground.</p>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Web API</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Swagger</span></div>
+                </div>
+              </article>
+            </div>
+          </div>
+        </div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:22px">
+          <div style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#93c572,#2c7f6f 42%,#5fcbb0 76%,#141414 100%)">
+            <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%">
+              <div style="position:relative;aspect-ratio:16/9;overflow:hidden">
+                <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
+                <div style="position:absolute;top:26px;left:22px;right:22px;bottom:-1px;border:1px solid rgba(255,255,255,0.1);border-bottom:none;border-radius:9px 9px 0 0;overflow:hidden;box-shadow:0 24px 50px -28px #000">
+                  <div class="pf-mk">
+  <div class="pf-mk-page">
+    <div class="pf-mk-nav"><b>Nova</b><span>Product</span><span>Pricing</span><span>Docs</span><i>Get started</i></div>
+    <div class="pf-mk-hero">
+      <div class="pf-mk-pill">New · v2.0 is live</div>
+      <div class="pf-mk-h1">Launch faster<br>than your <em>roadmap</em>.</div>
+      <div class="pf-mk-p">One workspace for planning, shipping and measuring every release.</div>
+      <div class="pf-mk-btns"><span class="pf-wave pf-wave-btn"><span>Start free</span></span><span class="ghost">Book a demo</span></div>
+    </div>
+    <div class="pf-mk-logos"><i style="width:14%"></i><i style="width:10%"></i><i style="width:16%"></i><i style="width:11%"></i><i style="width:13%"></i></div>
+  </div>
+  <div class="pf-mk-cms">
+    <div class="pf-mk-cms-h"><b>Hero section</b><span>Sanity · draft</span></div>
+    <label>Headline</label><div class="f">Launch faster than your roadmap.</div>
+    <label>Primary CTA</label><div class="f">Start free</div>
+    <label>Accent</label><div class="f sw"><i style="background:#93c572" class="on"></i><i style="background:#5fcbb0"></i><i style="background:#2c7f6f"></i><i style="background:#ededed"></i></div>
+    <div class="pf-mk-pub"><span>Publish</span><em></em></div>
+  </div>
+</div>
+                </div>
+              </div>
+              <div style="padding:20px 20px 22px">
+                <h3 style="margin:0 0 8px;font-size:17px;font-weight:500;letter-spacing:-0.015em">Marketing sites</h3>
+                <p style="margin:0 0 16px;font-size:14px;color:#8f8f8f;text-wrap:pretty">Launch pages with Vue.js and Bootstrap, built and shipped inside one sprint.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Vue.js</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Bootstrap</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">JavaScript</span></div>
+              </div>
+            </article>
+          </div>
+
+          <div style="flex:1 1 300px;min-width:0;padding:2px;border-radius:16px;background:linear-gradient(135deg,#5fcbb0,#2c7f6f 38%,#93c572 78%,#141414 100%)">
+            <article style="border-radius:14px;overflow:hidden;background:#0b0b0b;height:100%">
+              <div style="position:relative;aspect-ratio:16/9;overflow:hidden">
+                <div class="pf-aurora"><i class="pf-aurora-stars"></i><i class="pf-aurora-mtn"></i><b></b></div>
+                <div class="pf-mb" data-reveal>
+                  <div class="pf-phone p2">
+                    <i class="island"></i>
+                    <div class="pf-mb-top"><b>Devices</b><span>4 online</span></div>
+                    <div class="pf-mb-grid"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                    <div class="pf-mb-line"></div><div class="pf-mb-line s"></div>
+                  </div>
+                  <div class="pf-phone p1">
+                    <i class="island"></i>
+                    <div class="pf-mb-top"><b>Field notes</b><span class="pf-mb-state"><i class="off">Offline</i><i class="on">Synced</i></span></div>
+                    <div class="pf-mb-sync"><div class="bar"><i></i></div><span><b class="off">3 changes queued</b><b class="on">All changes synced</b></span></div>
+                    <div class="pf-mb-list">
+                      <div class="row"><i></i><div><b>Site A inspection</b><span>3 photos</span></div><em></em></div>
+                      <div class="row"><i></i><div><b>Pump station 12</b><span>Checklist</span></div><em></em></div>
+                      <div class="row"><i></i><div><b>North yard</b><span>2 notes</span></div><em></em></div>
+                      <div class="row"><i></i><div><b>Meter reading</b><span>Form</span></div><em></em></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="padding:20px 20px 22px">
+                <h3 style="margin:0 0 8px;font-size:17px;font-weight:500;letter-spacing:-0.015em">Mobile &amp; offline</h3>
+                <p style="margin:0 0 16px;font-size:14px;color:#8f8f8f;text-wrap:pretty">Flutter apps with Firebase sync — offline-first, back online the moment a connection returns.</p>
+                <div style="display:flex;flex-wrap:wrap;gap:6px"><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Flutter</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Dart</span><span style="font-size:11px;color:#8a8a8a;border:1px solid #232323;border-radius:999px;padding:4px 10px;white-space:nowrap">Firebase</span></div>
+              </div>
+            </article>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <section id="process" style="padding:clamp(80px,9vw,128px) 0;border-top:1px solid #161616">
+      <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:34px">
+        <div>
+          <p style="margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">How a project runs</p>
+          <h2 style="margin:0;font-size:clamp(1.6rem,2.8vw,2.3rem);font-weight:500;letter-spacing:-0.03em;line-height:1.1;text-wrap:pretty">Four stages, one continuous thread.</h2>
+        </div>
+        <span style="font-size:13.5px;color:#8f8f8f">Typical engagement: 4–8 weeks</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:clamp(20px,3vw,34px)">
+        <div style="min-width:0">
+          <div style="height:2px;border-radius:2px;background:linear-gradient(90deg,#93c572,#5fcbb0);margin-bottom:16px"></div>
+          <p style="margin:0 0 8px;font-size:10.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Stage one</p>
+          <h3 style="margin:0 0 8px;font-size:16px;font-weight:500;letter-spacing:-0.015em">Discovery</h3>
+          <p style="margin:0;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">A short call, the current product, and the release you are aiming at. I come back with scope and a fixed price.</p>
+        </div>
+        <div style="min-width:0">
+          <div style="height:2px;border-radius:2px;background:linear-gradient(90deg,#93c572,#5fcbb0);margin-bottom:16px"></div>
+          <p style="margin:0 0 8px;font-size:10.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Stage two</p>
+          <h3 style="margin:0 0 8px;font-size:16px;font-weight:500;letter-spacing:-0.015em">Design</h3>
+          <p style="margin:0;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">Interface design in the open — flows, states and type scale reviewed against real content, not filler.</p>
+        </div>
+        <div style="min-width:0">
+          <div style="height:2px;border-radius:2px;background:linear-gradient(90deg,#93c572,#5fcbb0);margin-bottom:16px"></div>
+          <p style="margin:0 0 8px;font-size:10.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Stage three</p>
+          <h3 style="margin:0 0 8px;font-size:16px;font-weight:500;letter-spacing:-0.015em">Build</h3>
+          <p style="margin:0;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">Implementation in your stack with a preview deploy on every push, so feedback lands on something real.</p>
+        </div>
+        <div style="min-width:0">
+          <div style="height:2px;border-radius:2px;background:linear-gradient(90deg,#93c572,#5fcbb0);margin-bottom:16px"></div>
+          <p style="margin:0 0 8px;font-size:10.5px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Stage four</p>
+          <h3 style="margin:0 0 8px;font-size:16px;font-weight:500;letter-spacing:-0.015em">Launch</h3>
+          <p style="margin:0;font-size:13.5px;color:#8f8f8f;text-wrap:pretty">Release, handover notes and a repo your team can carry forward without me.</p>
+        </div>
+      </div>
+
+              <div style="display:flex;flex-wrap:wrap;align-items:center;gap:clamp(32px,5vw,72px);margin-top:clamp(56px,7vw,96px);padding-top:clamp(40px,5vw,64px);border-top:1px solid #161616">
+        <div style="flex:1 1 300px;min-width:0">
+          <p style="margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">The pipeline</p>
+          <h3 style="margin:0 0 18px;font-size:clamp(1.4rem,2.2vw,1.9rem);font-weight:500;letter-spacing:-0.03em;line-height:1.12;text-wrap:pretty">One thread from brief to release.</h3>
+          <p style="margin:0 0 24px;font-size:15px;color:#8f8f8f;max-width:44ch;text-wrap:pretty">Every input — the product brief, the design system, the API — goes through a single build stage. Review, CI and deploy run on every push, so what comes out the other side is already live: a web app, a dashboard, a docs site.</p>
+          <div style="display:flex;flex-direction:column;gap:12px">
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#d4d4d4"><span style="width:8px;height:8px;border-radius:2px;background:#93c572;flex-shrink:0"></span>No handoff between design and code</div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#d4d4d4"><span style="width:8px;height:8px;border-radius:2px;background:#5fcbb0;flex-shrink:0"></span>Preview link on every pull request</div>
+            <div style="display:flex;align-items:center;gap:12px;font-size:14px;color:#d4d4d4"><span style="width:8px;height:8px;border-radius:2px;background:#2c7f6f;flex-shrink:0"></span>Handover-ready repository at launch</div>
+          </div>
+        </div>
+      <!-- Akış diyagramı -->
+      <div style="position:relative;flex:1.35 1 440px;min-width:0;aspect-ratio:1.5;border-radius:14px;overflow:hidden;background:#0b0b0b;border:1px solid #242424;box-shadow:0 46px 90px -40px #000">
+            <div style="position:absolute;left:0;right:0;top:0;height:30px;border-bottom:1px solid #1b1b1b;display:flex;align-items:center;gap:8px;padding:0 14px">
+              <span style="width:8px;height:8px;border-radius:2px;background:#93c572;display:block"></span>
+              <span style="font-size:10px;font-weight:500;letter-spacing:0.14em;text-transform:uppercase;color:#b4b4b4;white-space:nowrap">How the work flows</span>
+              <span style="margin-left:auto;font-size:10px;color:#7a7a7a;white-space:nowrap">4–8 weeks</span>
+            </div>
+            <div style="position:absolute;left:0;right:0;top:30px;bottom:0">
+            <svg viewBox="0 30 520 316" preserveAspectRatio="xMidYMid meet" style="position:absolute;inset:0;width:100%;height:100%">
+      <text x="20" y="86" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.6" fill="#7a7a7a">INPUT</text>
+      <text x="500" y="86" text-anchor="end" font-family="Inter, sans-serif" font-size="9" letter-spacing="1.6" fill="#7a7a7a">OUTPUT</text>
+      <path d="M132 119 H151 Q158 119 158 126 V159 Q158 166 165 166 H190" fill="none" stroke="#25302a" stroke-width="1.2"></path>
+      <path d="M132 163 H151 Q158 163 158 170 V175 Q158 182 165 182 H190" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M132 207 H151 Q158 207 158 200 V205 Q158 198 165 198 H190" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M330 166 H355 Q362 166 362 159 V126 Q362 119 369 119 H388" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M330 182 H355 Q362 182 362 175 V170 Q362 163 369 163 H388" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M330 198 H355 Q362 198 362 205 V200 Q362 207 369 207 H388" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M214 74 V150" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M306 74 V150" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M260 214 V300" fill="none" stroke="#25302a" stroke-width="1.3"></path>
+      <path d="M132 119 H151 Q158 119 158 126 V159 Q158 166 165 166 H190" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 0s"></path>
+      <path d="M132 163 H151 Q158 163 158 170 V175 Q158 182 165 182 H190" fill="none" stroke="#5fcbb0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 1.1s"></path>
+      <path d="M132 207 H151 Q158 207 158 200 V205 Q158 198 165 198 H190" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 2.2s"></path>
+      <path d="M330 166 H355 Q362 166 362 159 V126 Q362 119 369 119 H388" fill="none" stroke="#5fcbb0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 0.6s"></path>
+      <path d="M330 182 H355 Q362 182 362 175 V170 Q362 163 369 163 H388" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 1.7s"></path>
+      <path d="M330 198 H355 Q362 198 362 205 V200 Q362 207 369 207 H388" fill="none" stroke="#5fcbb0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 2.8s"></path>
+      <path d="M214 74 V150" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 0.4s"></path>
+      <path d="M306 74 V150" fill="none" stroke="#5fcbb0" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 2.4s"></path>
+      <path d="M260 214 V300" fill="none" stroke="#93c572" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="16 520" stroke-dashoffset="536" style="animation:om-flow 3.6s linear infinite 1.4s"></path>
+      <circle cx="132" cy="119" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="132" cy="163" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="132" cy="207" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="388" cy="119" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="388" cy="163" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="388" cy="207" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="214" cy="74" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="306" cy="74" r="2.4" fill="#2f3f36"></circle>
+      <circle cx="260" cy="300" r="2.4" fill="#2f3f36"></circle>
+      <g>
+        <rect x="20" y="104" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="32" y="116" width="6" height="6" rx="1.5" fill="#4a4a4a"></rect>
+        <text x="46" y="123.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">Product brief</text>
+      </g>
+      <g>
+        <rect x="20" y="148" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="32" y="160" width="6" height="6" rx="1.5" fill="#4a4a4a"></rect>
+        <text x="46" y="167.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">Design system</text>
+      </g>
+      <g>
+        <rect x="20" y="192" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="32" y="204" width="6" height="6" rx="1.5" fill="#4a4a4a"></rect>
+        <text x="46" y="211.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">API &amp; data</text>
+      </g>
+      <g>
+        <rect x="388" y="104" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="400" y="116" width="6" height="6" rx="1.5" fill="#93c572"></rect>
+        <text x="414" y="123.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">Web app</text>
+      </g>
+      <g>
+        <rect x="388" y="148" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="400" y="160" width="6" height="6" rx="1.5" fill="#5fcbb0"></rect>
+        <text x="414" y="167.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">Dashboard</text>
+      </g>
+      <g>
+        <rect x="388" y="192" width="112" height="30" rx="7" fill="#101010" stroke="#242424"></rect>
+        <rect x="400" y="204" width="6" height="6" rx="1.5" fill="#2c7f6f"></rect>
+        <text x="414" y="211.5" font-family="Inter, sans-serif" font-size="11" fill="#c4c4c4">Docs site</text>
+      </g>
+      <g>
+        <rect x="164" y="44" width="100" height="28" rx="14" fill="#0f0f0f" stroke="#242424"></rect>
+        <text x="214" y="62.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#b4b4b4">Architecture</text>
+      </g>
+      <g>
+        <rect x="256" y="44" width="100" height="28" rx="14" fill="#0f0f0f" stroke="#242424"></rect>
+        <text x="306" y="62.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#b4b4b4">Accessibility</text>
+      </g>
+      <g>
+        <rect x="190" y="300" width="140" height="28" rx="14" fill="#0f0f0f" stroke="#242424"></rect>
+        <text x="260" y="318.5" text-anchor="middle" font-family="Inter, sans-serif" font-size="10.5" fill="#b4b4b4">Review → CI → deploy</text>
+      </g>
+      <rect x="212" y="144" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="212" y="214" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="234" y="144" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="234" y="214" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="282" y="144" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="282" y="214" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="304" y="144" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="304" y="214" width="4" height="6" rx="1" fill="#2f3f36"></rect>
+      <rect x="184" y="164" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="330" y="164" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="184" y="180" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="330" y="180" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="184" y="196" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="330" y="196" width="6" height="4" rx="1" fill="#2f3f36"></rect>
+      <rect x="190" y="150" width="140" height="64" rx="10" fill="#0e120f" stroke="#3c6b4f" stroke-width="1.2"></rect>
+      <text x="260" y="178" text-anchor="middle" font-family="Inter, sans-serif" font-size="15" font-weight="500" fill="#f0f0f0">Build</text>
+      <text x="260" y="196" text-anchor="middle" font-family="Inter, sans-serif" font-size="10" fill="#8a8a8a">design → code → ship</text>
+    </svg>
+            </div>
+          </div>
+      </div>
+    </section>
+
+    <section id="approach" style="padding:clamp(80px,9vw,128px) 0;border-top:1px solid #161616">
+      <p style="margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">Approach</p>
+      <h2 style="margin:0 0 40px;font-size:clamp(1.6rem,2.8vw,2.3rem);font-weight:500;letter-spacing:-0.03em;line-height:1.1;max-width:22ch;text-wrap:pretty">Three habits that keep projects shipping.</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:clamp(20px,3vw,40px)">
+        <div style="border-top:1px solid #232323;padding-top:20px">
+          <h3 style="margin:0 0 10px;font-size:16px;font-weight:500">Prototype in the browser</h3>
+          <p style="margin:0;font-size:14px;color:#8f8f8f;text-wrap:pretty">Static mockups hide the hard parts. I build the real thing early, so scroll, state and loading are decided with working code.</p>
+        </div>
+        <div style="border-top:1px solid #232323;padding-top:20px">
+          <h3 style="margin:0 0 10px;font-size:16px;font-weight:500">Systems, not screens</h3>
+          <p style="margin:0;font-size:14px;color:#8f8f8f;text-wrap:pretty">Type scale, spacing and components come first. The next page after launch should cost hours, not a redesign.</p>
+        </div>
+        <div style="border-top:1px solid #232323;padding-top:20px">
+          <h3 style="margin:0 0 10px;font-size:16px;font-weight:500">Ship, then refine</h3>
+          <p style="margin:0;font-size:14px;color:#8f8f8f;text-wrap:pretty">Weekly deploys with a live preview link. Feedback lands on something real instead of a slide.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" style="padding:clamp(80px,9vw,128px) 0;border-top:1px solid #161616;display:flex;flex-wrap:wrap;gap:clamp(28px,5vw,64px)">
+      <div style="flex:1.3 1 380px;min-width:0">
+        <p style="margin:0 0 14px;font-size:11px;font-weight:500;letter-spacing:0.16em;text-transform:uppercase;color:#8a8a8a">About</p>
+        <h2 style="margin:0 0 20px;font-size:clamp(1.5rem,2.5vw,2.1rem);font-weight:500;letter-spacing:-0.03em;line-height:1.12;text-wrap:pretty">Design and engineering in the same pair of hands.</h2>
+        <p style="margin:0 0 16px;font-size:15.5px;color:#8f8f8f;max-width:58ch;text-wrap:pretty">I design the interface and build it — same week, same repo. Data model in Entity Framework, views in Razor, a front end that feels considered. Nothing gets drawn that cannot be shipped.</p>
+        <p style="margin:0;font-size:15.5px;color:#8f8f8f;max-width:58ch;text-wrap:pretty">Currently building EinarTask — a task management app on ASP.NET Core MVC — and going deeper into Entity Framework Core and Next.js. I keep the stack boring and hand over something a team can maintain without me.</p>
+      </div>
+      <div style="flex:1 1 260px;min-width:0">
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #1c1c1c">
+          <span style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#8a8a8a">GitHub</span>
+          <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" style="font-size:14px;color:#d4d4d4">github.com/Einaar5</a>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #1c1c1c">
+          <span style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#8a8a8a">Focus</span>
+          <span style="font-size:14px;color:#d4d4d4">ASP.NET Core web apps</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #1c1c1c">
+          <span style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#8a8a8a">Works with</span>
+          <span style="font-size:14px;color:#d4d4d4">Founders, product teams</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:14px 0;border-bottom:1px solid #1c1c1c">
+          <span style="font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:#8a8a8a">Currently</span>
+          <a href="https://github.com/Einaar5/EinarTask" target="_blank" rel="noreferrer" class="pf-wave pf-wave-btn" style="font-size:12px;font-weight:500;padding:5px 12px;border-radius:999px"><span>Building EinarTask</span><i class="pf-folds"></i></a>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="padding:clamp(88px,10vw,144px) 0;border-top:1px solid #161616">
+      <h2 style="margin:0;font-size:clamp(1.9rem,4vw,3.1rem);font-weight:500;letter-spacing:-0.035em;line-height:1.06;max-width:20ch;text-wrap:pretty">Have something to build?</h2>
+      <p style="margin:18px 0 30px;font-size:clamp(1rem,1.3vw,1.1rem);color:#8f8f8f;max-width:44ch;text-wrap:pretty">Send a short note about the product and the deadline — I read everything and reply quickly.</p>
+      <div style="display:flex;flex-wrap:wrap;align-items:center;gap:14px">
+        <a href="mailto:canbayirr055@gmail.com" style="font-size:clamp(1.05rem,1.8vw,1.4rem);font-weight:500;color:#ededed;border-bottom:1px solid #333;padding-bottom:4px">canbayirr055@gmail.com</a>
+        <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" class="pf-wave pf-wave-btn" style="font-size:14px;font-weight:500;padding:11px 20px"><span>See my GitHub</span><i class="pf-folds"></i></a>
+      </div>
+    </section>
+
+    <footer style="border-top:1px solid #161616;padding:26px 0 44px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px">
+      <span style="font-size:12px;color:#8a8a8a">Can Bayır — .NET Core developer · design &amp; web development</span>
+      <div style="display:flex;flex-wrap:wrap;gap:20px">
+        <a href="https://github.com/Einaar5" target="_blank" rel="noreferrer" style="font-size:12px;color:#8f8f8f">GitHub</a>
+        <a href="https://www.linkedin.com/in/can-bay%C4%B1r-60a65128a/" target="_blank" rel="noreferrer" style="font-size:12px;color:#8f8f8f">LinkedIn</a>
+        <a href="https://instagram.com/einarr_c" target="_blank" rel="noreferrer" style="font-size:12px;color:#8f8f8f">Instagram</a>
+        <a href="mailto:canbayirr055@gmail.com" style="font-size:12px;color:#8f8f8f">Email</a>
+      </div>
+    </footer>
+
+  </main>
+</div>
+<script>
+// Scroll'a giren sahneleri tetikle (data-reveal -> .is-in)
+(function () {
+  const els = document.querySelectorAll('[data-reveal]');
+  if (!('IntersectionObserver' in window)) { els.forEach(el => el.classList.add('is-in')); return; }
+  const io = new IntersectionObserver(entries => entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('is-in'); io.unobserve(e.target); }
+  }), { threshold: .35 });
+  els.forEach(el => io.observe(el));
+})();
+</script>
+<script>
+const pfTraces = {
+  props: { showTraces: true, traceSpeed: 4, traceCount: 18 },
+
+  ensure() {
+    const g = window.__pfBg;
+    const healthy = g && !g.dead && g.canvas && g.canvas.isConnected && Date.now() - g.last < 600;
+    if (!healthy) {
+      if (g && g.stop) g.stop();
+      this.start(0);
+    }
+    if (!window.__pfWatch) window.__pfWatch = setInterval(() => this.ensure(), 900);
+  },
+
+  build(w, h) {
+    const n = Math.max(4, Math.min(28, Math.round(this.props.traceCount ?? 18)));
+    const paths = [];
+    const mid = w / 2;
+    for (let i = 0; i < n; i++) {
+      const side = i % 2;
+      const pts = [];
+      let x, y;
+      if (side === 2) {
+        x = w * (0.08 + Math.random() * 0.84);
+        y = -80 - Math.random() * 220;
+      } else {
+        x = side === 0 ? -60 : w + 60;
+        y = 60 + ((i + Math.random()) / n) * Math.max(240, h - 160);
+      }
+      pts.push({ x, y });
+      const target = mid + (Math.random() - 0.5) * w * 0.22;
+      const legs = 2 + Math.floor(Math.random() * 3);
+      if (side === 2) {
+        y = 120 + Math.random() * Math.max(200, h * 0.55);
+        pts.push({ x, y });
+      }
+      for (let k = 0; k < legs; k++) {
+        x = x + (target - x) * (0.4 + Math.random() * 0.34);
+        pts.push({ x, y });
+        y = y + (Math.random() - 0.5) * 300;
+        pts.push({ x, y });
+      }
+      pts.push({ x: target, y });
+
+      const segs = [];
+      let total = 0;
+      for (let k = 0; k < pts.length - 1; k++) {
+        const a = pts[k], b = pts[k + 1];
+        const len = Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
+        if (len < 1) continue;
+        segs.push({ a, b, len, acc: total, horiz: a.y === b.y });
+        total += len;
+      }
+      if (!total) continue;
+      let top = pts[0].y, bot = pts[0].y;
+      for (const p of pts) { top = Math.min(top, p.y); bot = Math.max(bot, p.y); }
+      paths.push({ segs, total, top, bot, p: -Math.random() * 700, speed: 170 + Math.random() * 130, gap: 150 + Math.random() * 520 });
+    }
+    return paths;
+  },
+
+  start(attempt) {
+    const c = document.querySelector('canvas[data-pf-bg]');
+    if (!c) {
+      const n = attempt || 0;
+      if (n < 60) setTimeout(() => this.start(n + 1), 60);
+      return;
+    }
+    const ctx = c.getContext('2d');
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    let vw = 0, vh = 0, docH = 0, paths = [];
+
+    const fit = () => {
+      const r = c.getBoundingClientRect();
+      vw = Math.max(1, Math.round(r.width));
+      vh = Math.max(1, Math.round(r.height));
+      c.width = Math.round(vw * dpr);
+      c.height = Math.round(vh * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      docH = Math.max(vh, document.documentElement.scrollHeight);
+      paths = this.build(vw, docH);
+    };
+    fit();
+    window.addEventListener('resize', fit);
+    const g = window.__pfBg = {
+      canvas: c, last: Date.now(), dead: false, raf: 0,
+      stop() { this.dead = true; cancelAnimationFrame(this.raf); window.removeEventListener('resize', fit); }
+    };
+
+    const TAIL = 130, SLICE = 11;
+    const lerp = (a, b, t) => a + (b - a) * t;
+    let prev = 0, check = 0;
+
+    const frame = (now) => {
+      if (g.dead || !c.isConnected) { g.dead = true; return; }
+      g.last = Date.now();
+      const dt = Math.min(0.05, prev ? (now - prev) / 1000 : 0.016);
+      prev = now;
+
+      if (now - check > 1200) {
+        check = now;
+        const h = Math.max(vh, document.documentElement.scrollHeight);
+        if (Math.abs(h - docH) > 120) { docH = h; paths = this.build(vw, docH); }
+      }
+
+      const off = window.scrollY || window.pageYOffset || 0;
+      const boost = Math.max(1, Math.min(6, Math.round(this.props.traceSpeed ?? 4))) / 3;
+      ctx.clearRect(0, 0, vw, vh);
+
+      for (const path of paths) {
+        path.p += path.speed * boost * dt;
+        if (path.p > path.total + TAIL + path.gap) path.p = -Math.random() * 400;
+        if (path.bot - off < -40 || path.top - off > vh + 40) continue;
+
+        ctx.fillStyle = 'rgba(147,197,114,0.085)';
+        for (const s of path.segs) {
+          const y = s.a.y - off;
+          if (s.horiz) {
+            if (y > -6 && y < vh + 6) ctx.fillRect(Math.min(s.a.x, s.b.x), y, s.len, 1);
+          } else {
+            const y0 = Math.min(s.a.y, s.b.y) - off;
+            if (y0 < vh + 6 && y0 + s.len > -6) ctx.fillRect(s.a.x, y0, 1, s.len);
+          }
+        }
+
+        const head = path.p;
+        if (head <= 0 || head - TAIL >= path.total) continue;
+        for (const s of path.segs) {
+          const from = Math.max(s.acc, head - TAIL);
+          const to = Math.min(s.acc + s.len, head);
+          if (to <= from) continue;
+          for (let q = from; q < to; q += SLICE) {
+            const q2 = Math.min(q + SLICE, to);
+            const u = Math.max(0, Math.min(1, (q2 - (head - TAIL)) / TAIL));
+            const a = Math.pow(u, 1.7) * 0.95;
+            const g = Math.round(lerp(147, 95, u)), gr = Math.round(lerp(197, 203, u)), b = Math.round(lerp(114, 176, u));
+            ctx.fillStyle = 'rgba(' + g + ',' + gr + ',' + b + ',' + a.toFixed(3) + ')';
+            const d0 = q - s.acc, d1 = q2 - s.acc;
+            if (s.horiz) {
+              const dir = s.b.x > s.a.x ? 1 : -1;
+              const x0 = s.a.x + dir * d0;
+              const y = s.a.y - off;
+              if (y > -6 && y < vh + 6) ctx.fillRect(dir > 0 ? x0 : x0 - (d1 - d0), y - 0.5, d1 - d0, 1.6);
+            } else {
+              const dir = s.b.y > s.a.y ? 1 : -1;
+              const y0 = s.a.y + dir * d0 - off;
+              const yy = dir > 0 ? y0 : y0 - (d1 - d0);
+              if (yy < vh + 6 && yy + (d1 - d0) > -6) ctx.fillRect(s.a.x - 0.5, yy, 1.6, d1 - d0);
+            }
+          }
+        }
+      }
+      g.raf = requestAnimationFrame(frame);
+    };
+    g.raf = requestAnimationFrame(frame);
+  }
+};
+if (pfTraces.props.showTraces) pfTraces.ensure();
+</script>
+</body>
+</html>
